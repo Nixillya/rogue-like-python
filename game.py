@@ -219,7 +219,7 @@ def render_game(game = GAME()):
     font = pygame.font.SysFont('Comic Sans MS', 20)
     floor_text = font.render(f'Floor {game.map.floor}', True, (255, 255, 255))
     screen.blit(floor_text, (10+random.randint(-1,1),10+random.randint(-1,1)))
-    level_text = font.render(f'level {game.map.floor}', True, (255, 255, 255))
+    level_text = font.render(f'level {game.map.player.level}', True, (255, 255, 255))
     screen.blit(level_text, (10+random.randint(-1,1),35+random.randint(-1,1)))
 
     hpBar = (game.map.player.attributes.hp/game.map.player.attributes.hpMax)*200
