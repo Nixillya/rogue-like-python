@@ -448,8 +448,8 @@ def create_map(game = GAME()):
         floorMap = floor
         if(floorMap>50):
             floorMap = 50
-        tamY = random.randint(1,10)
-        tamX = random.randint(1,10)
+        tamY = random.randint(1,5)
+        tamX = random.randint(1,5)
         for y in range(0-tamY,tamY,1):
             for x in range(0-tamX,tamX,1):
                 if(mapY+tamY>50 and mapY+tamY<950 and mapX+tamX>50 and mapX+tamX<950):
@@ -518,9 +518,8 @@ def create_map(game = GAME()):
                             attPoints-=1
                             monster.attributes.dexterity+=0.1
                     if(key==False):
-                        if(random.random()<0.5):
-                            monster.key = True
-                            key = True
+                        monster.key = True
+                        key = True
                     monster.attributes.hp = monster.attributes.hpMax
                     monster.alive = True
                     break
