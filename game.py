@@ -90,6 +90,8 @@ class MAP:
         self.player = PLAYER()
         self.key = POS()
         self.items = numpy.array([POS() for _ in range(1)])
+        self.potions = [1,2,3,4]
+        random.shuffle(self.potions)
         self.monsters = numpy.array([MONSTER() for _ in range(1)])
         self.damagesView = numpy.array([DAMAGESVIEW() for _ in range(50)])
 class MENU:
@@ -259,22 +261,19 @@ def move_player(game = GAME()):
                                             game.map.player.inventory[y][x].dexterity = 0
                                             game.map.player.inventory[y][x].intelligence = 0
                                             game.map.player.inventory[y][x].cursed = False
-                                            id = random.randint(1,2)
-                                            if(random.random()<0.5):
-                                                id = 1
-                                            game.map.player.inventory[y][x].id = id
-                                            if(id==1):
+                                            game.map.player.inventory[y][x].id = random.randint(1,3)
+                                            if(game.map.player.inventory[y][x].id==game.map.potions[0]):
                                                 game.map.player.inventory[y][x].heal = 1+game.map.floor+random.randint(0-game.map.floor,game.map.floor)
                                             success = True
                                             item.y = -1
                                             item.x = -1
                 if(game.map.player.inventoryOpened):
-                    if(game.map.player.inventory[game.map.player.inventorySelection.y][game.map.player.inventorySelection.x].id==1):
+                    if(game.map.player.inventory[game.map.player.inventorySelection.y][game.map.player.inventorySelection.x].id==game.map.potions[0]):
                         game.map.player.attributes.hp+=game.map.player.inventory[game.map.player.inventorySelection.y][game.map.player.inventorySelection.x].heal
                         if(game.map.player.attributes.hp>game.map.player.attributes.hpMax):
                             game.map.player.attributes.hp = game.map.player.attributes.hpMax
                         game.map.player.inventory[game.map.player.inventorySelection.y][game.map.player.inventorySelection.x].id = 0
-                    if(game.map.player.inventory[game.map.player.inventorySelection.y][game.map.player.inventorySelection.x].id==2):
+                    if(game.map.player.inventory[game.map.player.inventorySelection.y][game.map.player.inventorySelection.x].id==game.map.potions[1]):
                         while(True):
                             y = random.randint(0,999)
                             x = random.randint(0,999)
@@ -282,6 +281,31 @@ def move_player(game = GAME()):
                                 game.map.player.pos.y = y
                                 game.map.player.pos.x = x
                                 break
+                        game.map.player.inventory[game.map.player.inventorySelection.y][game.map.player.inventorySelection.x].id = 0
+                    if(game.map.player.inventory[game.map.player.inventorySelection.y][game.map.player.inventorySelection.x].id==game.map.potions[2]):
+                        for monster in game.map.monsters:
+                            if(monster.alive):
+                                while(True):
+                                    y = random.randint(0,999)
+                                    x = random.randint(0,999)
+                                    if(game.map.tiles[y][x]==1):
+                                        monster.pos.y = y
+                                        monster.pos.x = x
+                                        break
+                        game.map.player.inventory[game.map.player.inventorySelection.y][game.map.player.inventorySelection.x].id = 0
+                    if(game.map.player.inventory[game.map.player.inventorySelection.y][game.map.player.inventorySelection.x].id==game.map.potions[3]):
+                        success = False
+                        for monster in game.map.monsters:
+                            if(not success):
+                                if(monster.alive):
+                                    if(random.random()<100/len(game.map.monsters)):
+                                        monster.attributes.hp = 0
+                                        success = True
+                        if(not success):
+                            if(game.map.player.attributes.hp==1):
+                                game.map.player.attributes.hp = 0
+                            else:
+                                game.map.player.attributes.hp = 1
                         game.map.player.inventory[game.map.player.inventorySelection.y][game.map.player.inventorySelection.x].id = 0
             if(keyboard.is_pressed('esc')):
                 game.play = False
@@ -374,13 +398,21 @@ def render_inventory(game = GAME()):
             if(game.map.player.inventorySelection.y == j and game.map.player.inventorySelection.x == i):
                 pygame.draw.rect(screen,"#424242",(x,y,50,50))
             if(game.map.player.inventory[j][i].id==1):
-                pygame.draw.rect(screen,"#FFFFFF",(x+10,y+15,30,25))
-                pygame.draw.rect(screen,"#FFFFFF",(x+20,y+5,10,35))
-                pygame.draw.rect(screen,"#FFFFFF",(x+18,y+3,14,5))
+                pygame.draw.rect(screen,"#9DFF90",(x+10,y+15,30,25))
+                pygame.draw.rect(screen,"#9DFF90",(x+20,y+5,10,35))
+                pygame.draw.rect(screen,"#9DFF90",(x+18,y+3,14,5))
             if(game.map.player.inventory[j][i].id==2):
-                pygame.draw.rect(screen,"#FFFFFF",(x+10,y+15,30,25))
-                pygame.draw.rect(screen,"#FFFFFF",(x+20,y+5,10,35))
-                pygame.draw.rect(screen,"#FFFFFF",(x+18,y+3,14,5))
+                pygame.draw.rect(screen,"#97E2FF",(x+10,y+15,30,25))
+                pygame.draw.rect(screen,"#97E2FF",(x+20,y+5,10,35))
+                pygame.draw.rect(screen,"#97E2FF",(x+18,y+3,14,5))
+            if(game.map.player.inventory[j][i].id==3):
+                pygame.draw.rect(screen,"#ECFF97",(x+10,y+15,30,25))
+                pygame.draw.rect(screen,"#ECFF97",(x+20,y+5,10,35))
+                pygame.draw.rect(screen,"#ECFF97",(x+18,y+3,14,5))
+            if(game.map.player.inventory[j][i].id==4):
+                pygame.draw.rect(screen,"#FF5D5D",(x+10,y+15,30,25))
+                pygame.draw.rect(screen,"#FF5D5D",(x+20,y+5,10,35))
+                pygame.draw.rect(screen,"#FF5D5D",(x+18,y+3,14,5))
             x+=60
         y+=60
         x = 20
