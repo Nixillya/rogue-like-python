@@ -48,6 +48,7 @@ class ITEM:
         self.dexterity = 0
         self.intelligence = 0
         self.cursed = False
+        self.reveled = False
 class PLAYER:
     def __init__(self):
         self.attPoints = 5
@@ -76,7 +77,7 @@ class MONSTER:
         self.attacked = False
         self.cured = False
         self.key = False
-        self.render = 0
+        self.render = 1
         self.clockSpeed = time.perf_counter()
         self.pos = POS()
         self.camPos = POS()
@@ -95,7 +96,7 @@ class MAP:
         self.player = PLAYER()
         self.key = POS()
         self.items = numpy.array([POS() for _ in range(1)])
-        self.potionsColor = [(random.randint(0,255),random.randint(0,255),random.randint(0,255)),(random.randint(0,255),random.randint(0,255),random.randint(0,255)),(random.randint(0,255),random.randint(0,255),random.randint(0,255)),(random.randint(0,255),random.randint(0,255),random.randint(0,255)),(random.randint(0,255),random.randint(0,255),random.randint(0,255)),(random.randint(0,255),random.randint(0,255),random.randint(0,255))]
+        self.potionsColor = [(random.randint(0,255),random.randint(0,255),random.randint(0,255)),(random.randint(0,255),random.randint(0,255),random.randint(0,255)),(random.randint(0,255),random.randint(0,255),random.randint(0,255)),(random.randint(0,255),random.randint(0,255),random.randint(0,255)),(random.randint(0,255),random.randint(0,255),random.randint(0,255))]
         self.monsters = numpy.array([MONSTER() for _ in range(1)])
         self.damagesView = numpy.array([DAMAGESVIEW() for _ in range(50)])
 class MENU:
@@ -174,41 +175,38 @@ def render_inventory(game = GAME()):
                 pygame.draw.rect(screen, game.map.potionsColor[4], (x+13, y+25, 24, 15)) # Líquido
                 pygame.draw.rect(screen, "#FFFFFF", (x+15, y+22, 3, 12)) # Brilho
             if(game.map.player.inventory[j][i].id==6):
-                pygame.draw.rect(screen, "#8B5A2B", (x+20, y+5, 10, 5)) # Rolha
-                pygame.draw.rect(screen, "#C8C8C8", (x+18, y+10, 14, 8)) # Gargalo
-                pygame.draw.rect(screen, "#C8C8C8", (x+10, y+18, 30, 20)) # Corpo do frasco
-                pygame.draw.rect(screen, "#C8C8C8", (x+12, y+38, 26, 5)) # Base
-                pygame.draw.rect(screen, game.map.potionsColor[5], (x+13, y+25, 24, 15)) # Líquido
-                pygame.draw.rect(screen, "#FFFFFF", (x+15, y+22, 3, 12)) # Brilho
-            if(game.map.player.inventory[j][i].id==7):
                 pygame.draw.rect(screen, "#D8D8D8", (x+22, y+5, 6, 25)) # Lâmina
                 pygame.draw.rect(screen, "#D8D8D8", (x+23, y+3, 4, 2)) # Ponta
                 pygame.draw.rect(screen, "#D8D8D8", (x+24, y+1, 2, 2)) # Ponta
                 pygame.draw.rect(screen, "#C9A227", (x+15, y+30, 20, 4)) # Guarda
                 pygame.draw.rect(screen, "#8B5A2B", (x+22, y+34, 6, 10)) # Cabo
                 pygame.draw.rect(screen, "#C9A227", (x+21, y+44, 8, 3)) # Pomo
+            if(game.map.player.inventory[j][i].id==7):
+                pygame.draw.circle(screen, "#707070", (x+25, y+25), 18)
+                pygame.draw.circle(screen, "#C8C8C8", (x+25, y+25), 15)
+                pygame.draw.rect(screen, "#E8E8E8", (x+23, y+12, 4, 26))
+                pygame.draw.rect(screen, "#E8E8E8", (x+12, y+23, 26, 4))
+                pygame.draw.circle(screen, "#AAAAAA", (x+25, y+25), 4)
             if(game.map.player.inventory[j][i].id==8):
-                pygame.draw.rect(screen, "#A0A0A0", (x+10, y+5, 30, 5)) # Parte superior
-                pygame.draw.rect(screen, "#A0A0A0", (x+5,  y+10, 5, 20)) # Lateral
-                pygame.draw.rect(screen, "#A0A0A0", (x+40, y+10, 5, 20)) # Lateral
-                pygame.draw.rect(screen, "#C0C0C0", (x+10, y+10, 30, 25)) # Centro
-                pygame.draw.rect(screen, "#A0A0A0", (x+15, y+35, 20, 5)) # Parte inferior afunilando
-                pygame.draw.rect(screen, "#A0A0A0", (x+20, y+40, 10, 5)) # Parte inferior afunilando
-            if(game.map.player.inventory[j][i].id==9):
                 pygame.draw.rect(screen, "#FFD700", (x+18, y+8, 14, 5)) # Parte superior
                 pygame.draw.rect(screen, "#FFD700", (x+13, y+13, 5, 14)) # Laterais
                 pygame.draw.rect(screen, "#FFD700", (x+32, y+13, 5, 14))
                 pygame.draw.rect(screen, "#FFD700", (x+18, y+27, 14, 5)) # Parte inferior
                 pygame.draw.rect(screen, "#4DA6FF", (x+20, y+3, 10, 5)) # Joia
-            if(game.map.player.inventory[j][i].id==10):
+            if(game.map.player.inventory[j][i].id==9):
                 pygame.draw.rect(screen, "#FFD700", (x+22, y+8, 6, 28)) # Haste vertical
                 pygame.draw.rect(screen, "#FFD700", (x+12, y+16, 26, 6)) # Braços
                 pygame.draw.rect(screen, "#FFD700", (x+18, y+36, 14, 5)) # Base
-                pygame.draw.rect(screen, "#FFFFFF", (x+20, y+18, 10, 6)) # Joia central
+                pygame.draw.rect(screen, "#FFFFFF", (x+20, y+15, 10, 6)) # Joia central
                 pygame.draw.rect(screen, "#FFF3A0", (x+20, y+5, 10, 3)) # Topo
-            if(j==0):
-                if(game.map.player.inventory[j][i].cursed):
-                    pygame.draw.circle(screen,"#FF0000",[x+random.randint(10,40),y+random.randint(10,40)],random.randint(1,10))
+            if(game.map.player.inventory[j][i].id==10):
+                pygame.draw.rect(screen, "#43FF52", (x+22, y+8, 6, 28)) # Haste vertical
+                pygame.draw.rect(screen, "#43FF52", (x+12, y+16, 26, 6)) # Braços
+                pygame.draw.rect(screen, "#43FF52", (x+18, y+36, 14, 5)) # Base
+                pygame.draw.rect(screen, "#FFFFFF", (x+20, y+15, 10, 6)) # Joia central
+                pygame.draw.rect(screen, "#BEFFA0", (x+20, y+5, 10, 3)) # Topo
+            if(game.map.player.inventory[j][i].cursed and game.map.player.inventory[j][i].reveled):
+                pygame.draw.circle(screen,"#FF0000",[x+random.randint(10,40),y+random.randint(10,40)],random.randint(1,10))
             x+=60
         y+=60
         x = 20
@@ -254,6 +252,9 @@ def move_monsters(game = GAME()):
                 if(monster.id==2):
                     pygame.draw.circle(screen,"#137000",[X+monster.camPos.x+random.randint(-2,2),Y+monster.camPos.y+random.randint(-2,2)],20)
                     pygame.draw.circle(screen,"#137000",[X+monster.camPos.x+random.randint(10,40)-25,Y+monster.camPos.y+random.randint(10,40)-25],random.randint(1,10))
+                if(monster.id==3):
+                    pygame.draw.circle(screen,"#706500",[X+monster.camPos.x+random.randint(-2,2),Y+monster.camPos.y+random.randint(-2,2)],20)
+                    pygame.draw.circle(screen,"#706500",[X+monster.camPos.x+random.randint(10,40)-25,Y+monster.camPos.y+random.randint(10,40)-25],random.randint(1,10))
                 if(monster.attacked):
                     monster.attacked = False
                     pygame.draw.circle(screen,"#FF0000",[X+monster.camPos.x+random.randint(-2,2),Y+monster.camPos.y+random.randint(-2,2)],20)
@@ -271,12 +272,16 @@ def move_monsters(game = GAME()):
                 if(monster.id==0 or monster.id==2):
                     upMonster = random.randint(0,len(game.map.monsters)-1)
                     if(game.map.monsters[upMonster].id==1):
-                        game.map.monsters[upMonster].attributes.hp = game.map.floor
-                        game.map.monsters[upMonster].attributes.hpMax = game.map.floor
-                        game.map.monsters[upMonster].attributes.defense = game.map.floor
-                        game.map.monsters[upMonster].attributes.strength = game.map.floor
-                        game.map.monsters[upMonster].attributes.intelligence = game.map.floor
-                        game.map.monsters[upMonster].attributes.dexterity = game.map.floor
+                        game.map.monsters[upMonster].attributes.hp*=2
+                        game.map.monsters[upMonster].attributes.hpMax*=2
+                        game.map.monsters[upMonster].attributes.defense*=2
+                        game.map.monsters[upMonster].attributes.strength*=2
+                        game.map.monsters[upMonster].attributes.intelligence*=2
+                        game.map.monsters[upMonster].attributes.dexterity*=2
+                if(monster.id==1):
+                    upMonster = random.randint(0,len(game.map.monsters)-1)
+                    if(game.map.monsters[upMonster].id==3):
+                        game.map.monsters[upMonster].attributes.dexterity+=1
                 game.map.player.exp+=random.randint(1,game.map.floor*game.map.player.attributes.intelligence)
                 if(game.map.player.exp>game.map.player.nextExp):
                     game.map.player.exp = game.map.player.nextExp
@@ -287,23 +292,6 @@ def move_monsters(game = GAME()):
                     if(monster.render!=1):
                         monster.render+=1
                 monster.clockSpeed = time.perf_counter()
-                if(monster.id==2):
-                    if(random.random()<0.5):
-                        healMonster = random.randint(0,len(game.map.monsters)-1)
-                        if(not monster==game.map.monsters[healMonster]):
-                            if(game.map.monsters[healMonster].attributes.hp<game.map.monsters[healMonster].attributes.hpMax):
-                                game.map.monsters[healMonster].attributes.hp+=1
-                                game.map.monsters[healMonster].cured = True
-                    else:
-                        if(random.random()<0.1):
-                            pygame.draw.circle(screen,"#8400FF",[525+random.randint(-1,1),525+random.randint(-1,1)],20)
-                            game.map.player.attributes.hp-=1
-                            objectView = random.randint(0,49)
-                            game.map.damagesView[objectView].value = -1
-                            game.map.damagesView[objectView].id = 1
-                            game.map.damagesView[objectView].pos.y = random.randint(250,750)
-                            game.map.damagesView[objectView].pos.x = random.randint(250,750)
-                            game.map.damagesView[objectView].size = 50
                 target = POS()
                 target.y = 0
                 target.x = 0
@@ -341,6 +329,31 @@ def move_monsters(game = GAME()):
                                         direction = 3
                                         if(monster.id==2):
                                             direction = 2
+                    if(monster.id==2):
+                        if(random.random()<0.9):
+                            healMonster = random.randint(0,len(game.map.monsters)-1)
+                            if(not monster==game.map.monsters[healMonster]):
+                                if(game.map.monsters[healMonster].attributes.hp<game.map.monsters[healMonster].attributes.hpMax):
+                                    game.map.monsters[healMonster].attributes.hp+=game.map.floor
+                                    if(game.map.monsters[healMonster].attributes.hp>game.map.monsters[healMonster].attributes.hpMax):
+                                        game.map.monsters[healMonster].attributes.hp = game.map.monsters[healMonster].attributes.hpMax
+                                    game.map.monsters[healMonster].cured = True
+                                    direction = -1
+                        else:
+                            if(random.random()<0.1):
+                                pygame.draw.circle(screen,"#8400FF",[525+random.randint(-1,1),525+random.randint(-1,1)],20)
+                                game.map.player.attributes.hp-=1
+                                objectView = random.randint(0,49)
+                                game.map.damagesView[objectView].value = -1
+                                game.map.damagesView[objectView].id = 1
+                                game.map.damagesView[objectView].pos.y = random.randint(250,750)
+                                game.map.damagesView[objectView].pos.x = random.randint(250,750)
+                                game.map.damagesView[objectView].size = 50
+                                direction = -1
+                                if(game.map.player.inventory[0][2].id==10):
+                                    if(random.random()<0.1):
+                                        game.map.player.attributes.hp = game.map.player.attributes.hpMax
+                                        clear_slot(game,0,2)
                 if(direction==0):
                     target.y-=1
                 if(direction==1):
@@ -395,6 +408,15 @@ def move_monsters(game = GAME()):
                         if(random.random()<0.5):
                             damage+=monster.attributes.intelligence
                         defense = random.randint(0,game.map.player.attributes.defense)
+                        if(game.map.player.inventory[0][1].id==7):
+                            if(random.random()<0.5):
+                                defense+=random.randint(1,defense+1)
+                                if(random.random()<0.1):
+                                    clear_slot(game,0,1)
+                        if(game.map.player.inventory[0][2].id==10):
+                            if(random.random()<0.1):
+                                game.map.player.attributes.hp = game.map.player.attributes.hpMax
+                                clear_slot(game,0,2)
                         if(random.random()<0.5):
                             defense+=monster.attributes.intelligence
                         if(defense>=damage):
@@ -480,6 +502,43 @@ def move_monsters(game = GAME()):
         screen.blit(continue_text, (500-continue_text.get_size()[0]/2+random.randint(-1,1),850-continue_text.get_size()[1]/2+random.randint(-1,1)))
     if(game.map.player.inventoryOpened):
         render_inventory(game)
+    y = 20
+    x = 20
+    for i in range(3):
+        if(game.map.player.inventory[0][i].id==6):
+            pygame.draw.rect(screen, "#D8D8D8", (x+22, y+5, 6, 25)) # Lâmina
+            pygame.draw.rect(screen, "#D8D8D8", (x+23, y+3, 4, 2)) # Ponta
+            pygame.draw.rect(screen, "#D8D8D8", (x+24, y+1, 2, 2)) # Ponta
+            pygame.draw.rect(screen, "#C9A227", (x+15, y+30, 20, 4)) # Guarda
+            pygame.draw.rect(screen, "#8B5A2B", (x+22, y+34, 6, 10)) # Cabo
+            pygame.draw.rect(screen, "#C9A227", (x+21, y+44, 8, 3)) # Pomo
+        if(game.map.player.inventory[0][i].id==7):
+            pygame.draw.circle(screen, "#707070", (x+25, y+25), 18)
+            pygame.draw.circle(screen, "#C8C8C8", (x+25, y+25), 15)
+            pygame.draw.rect(screen, "#E8E8E8", (x+23, y+12, 4, 26))
+            pygame.draw.rect(screen, "#E8E8E8", (x+12, y+23, 26, 4))
+            pygame.draw.circle(screen, "#AAAAAA", (x+25, y+25), 4)
+        if(game.map.player.inventory[0][i].id==8):
+            pygame.draw.rect(screen, "#FFD700", (x+18, y+8, 14, 5)) # Parte superior
+            pygame.draw.rect(screen, "#FFD700", (x+13, y+13, 5, 14)) # Laterais
+            pygame.draw.rect(screen, "#FFD700", (x+32, y+13, 5, 14))
+            pygame.draw.rect(screen, "#FFD700", (x+18, y+27, 14, 5)) # Parte inferior
+            pygame.draw.rect(screen, "#4DA6FF", (x+20, y+3, 10, 5)) # Joia
+        if(game.map.player.inventory[0][i].id==9):
+            pygame.draw.rect(screen, "#FFD700", (x+22, y+8, 6, 28)) # Haste vertical
+            pygame.draw.rect(screen, "#FFD700", (x+12, y+16, 26, 6)) # Braços
+            pygame.draw.rect(screen, "#FFD700", (x+18, y+36, 14, 5)) # Base
+            pygame.draw.rect(screen, "#FFFFFF", (x+20, y+15, 10, 6)) # Joia central
+            pygame.draw.rect(screen, "#FFF3A0", (x+20, y+5, 10, 3)) # Topo
+        if(game.map.player.inventory[0][i].id==10):
+            pygame.draw.rect(screen, "#43FF52", (x+22, y+8, 6, 28)) # Haste vertical
+            pygame.draw.rect(screen, "#43FF52", (x+12, y+16, 26, 6)) # Braços
+            pygame.draw.rect(screen, "#43FF52", (x+18, y+36, 14, 5)) # Base
+            pygame.draw.rect(screen, "#FFFFFF", (x+20, y+15, 10, 6)) # Joia central
+            pygame.draw.rect(screen, "#BEFFA0", (x+20, y+5, 10, 3)) # Topo
+        if(game.map.player.inventory[0][i].cursed and game.map.player.inventory[0][i].reveled):
+            pygame.draw.circle(screen,"#FF0000",[x+random.randint(10,40),y+random.randint(10,40)],random.randint(1,10))
+        x+=60
 #----------------------------------------------------------------------------------------------------------------------------------------
 def move_player(game = GAME()):
     speed = int(game.map.player.attributes.dexterity)
@@ -498,8 +557,8 @@ def move_player(game = GAME()):
 
     if(game.map.player.attributes.hp<1):
         game.map.player.attributes.hp = 0
-        if(game.map.player.inventory[0][2].id==10):
-            if(random.randint()<0.0001):
+        if(game.map.player.inventory[0][2].id==9):
+            if(random.random()<0.005):
                 while(True):
                     y = random.randint(0,999)
                     x = random.randint(0,999)
@@ -511,6 +570,8 @@ def move_player(game = GAME()):
                 for y in range(4):
                     for x in range(3):
                         clear_slot(game,y,x)
+                game.map.player.keyInput = 5
+                return
         else:
             if(keyboard.is_pressed('esc')):
                 game.play = False
@@ -529,9 +590,9 @@ def move_player(game = GAME()):
                 game.map.player.level+=1
                 game.map.player.exp = 0
                 if(game.map.player.attributes.hp>=game.map.player.attributes.hpMax):
-                    game.map.player.exp+=1
+                    game.map.player.exp+=game.map.floor
                 else:
-                    game.map.player.attributes.hp+=1
+                    game.map.player.attributes.hp+=game.map.floor
                 game.map.player.nextExp+=random.randint(1,game.map.floor)
             if(keyboard.is_pressed('w')):
                 clock = True
@@ -564,8 +625,9 @@ def move_player(game = GAME()):
             if(keyboard.is_pressed('q')):
                 clock = True
                 if(game.map.player.inventoryOpened):
-                    clear_slot(game,game.map.player.inventorySelection.y,game.map.player.inventorySelection.x)
-                    game.map.player.exp+=random.randint(1,game.map.floor*game.map.player.attributes.intelligence)
+                    if(game.map.player.inventory[game.map.player.inventorySelection.y][game.map.player.inventorySelection.x].id!=0):
+                        clear_slot(game,game.map.player.inventorySelection.y,game.map.player.inventorySelection.x)
+                        game.map.player.exp+=random.randint(1,game.map.floor*game.map.player.attributes.intelligence)
             if(keyboard.is_pressed('enter')):
                 clock = True
                 if(not game.map.player.inventoryOpened):
@@ -588,46 +650,69 @@ def move_player(game = GAME()):
                             game.map.player.keyInput = 5
                             clear_slot(game,game.map.player.inventorySelection.y,game.map.player.inventorySelection.x)
                         if(game.map.player.inventory[game.map.player.inventorySelection.y][game.map.player.inventorySelection.x].id==3):
-                            if(game.map.player.inventory[game.map.player.inventorySelection.y][game.map.player.inventorySelection.x].cursed):
-                                game.map.player.attributes.strength-=10
+                            buff = random.randint(0,4)
+                            debuff = random.randint(0,4)
+                            while(buff==debuff):
+                                buff = random.randint(0,4)
+                                debuff = random.randint(0,4)
+                            if(buff==0):
+                                hp = random.randint(1,10)
+                                game.map.player.attributes.hpMax+=hp
+                                game.map.player.attributes.hp+=hp
+                            if(debuff==0):
+                                game.map.player.attributes.hpMax-=random.randint(1,10)
+                                if(game.map.player.attributes.hpMax<1):
+                                    game.map.player.attributes.hpMax = 1
+                            if(buff==1):
+                                game.map.player.attributes.defense+=random.randint(1,10)
+                            if(debuff==1):
+                                game.map.player.attributes.defense-=random.randint(1,10)
+                                if(game.map.player.attributes.defense<0):
+                                    game.map.player.attributes.defense = 0
+                            if(buff==2):
+                                game.map.player.attributes.strength+=random.randint(1,10)
+                            if(debuff==2):
+                                game.map.player.attributes.strength-=random.randint(1,10)
                                 if(game.map.player.attributes.strength<1):
                                     game.map.player.attributes.strength = 1
-                            else:
-                                game.map.player.attributes.strength+=10
+                            if(buff==3):
+                                game.map.player.attributes.intelligence+=1
+                            if(debuff==3):
+                                game.map.player.attributes.intelligence-=1
+                                if(game.map.player.attributes.intelligence<1):
+                                    game.map.player.attributes.intelligence = 1
+                            if(buff==4):
+                                game.map.player.attributes.dexterity+=0.1
+                            if(debuff==4):
+                                game.map.player.attributes.dexterity-=0.1
+                                if(game.map.player.attributes.dexterity<1):
+                                    game.map.player.attributes.dexterity = 1
                             clear_slot(game,game.map.player.inventorySelection.y,game.map.player.inventorySelection.x)
                         if(game.map.player.inventory[game.map.player.inventorySelection.y][game.map.player.inventorySelection.x].id==4):
                             if(game.map.player.inventory[game.map.player.inventorySelection.y][game.map.player.inventorySelection.x].cursed):
-                                for y in range(1000):
-                                    for x in range(1000):
-                                        game.map.memory[y][x] = 0
+                                for y in range(-50,50):
+                                    for x in range(-50,50):
+                                        game.map.memory[game.map.player.pos.y+y][game.map.player.pos.x+x] = 0
                             else:
-                                for y in range(1000):
-                                    for x in range(1000):
-                                        if(game.map.tiles[y][x]!=0):
+                                for y in range(-50,50):
+                                    for x in range(-50,50):
+                                        if(game.map.tiles[game.map.player.pos.y+y][game.map.player.pos.x+x]!=0):
                                             for j in range(-1,2):
                                                 for i in range(-1,2):
-                                                    game.map.memory[y+j][x+i] = 1
+                                                    game.map.memory[game.map.player.pos.y+y+j][game.map.player.pos.x+x+i] = 1
                             clear_slot(game,game.map.player.inventorySelection.y,game.map.player.inventorySelection.x)
                         if(game.map.player.inventory[game.map.player.inventorySelection.y][game.map.player.inventorySelection.x].id==5):
                             game.map.player.exp = game.map.player.nextExp
                             clear_slot(game,game.map.player.inventorySelection.y,game.map.player.inventorySelection.x)
-                        if(game.map.player.inventory[game.map.player.inventorySelection.y][game.map.player.inventorySelection.x].id==6):
-                            if(game.map.player.inventory[game.map.player.inventorySelection.y][game.map.player.inventorySelection.x].cursed):
-                                game.map.player.attributes.intelligence-=1
-                                if(game.map.player.attributes.intelligence<1):
-                                    game.map.player.attributes.intelligence = 1
-                            else:
-                                game.map.player.attributes.intelligence+=1
-                            clear_slot(game,game.map.player.inventorySelection.y,game.map.player.inventorySelection.x)
                         x = game.map.player.inventorySelection.x
                         equip = False
-                        if(game.map.player.inventory[game.map.player.inventorySelection.y][game.map.player.inventorySelection.x].id in [7]):
+                        if(game.map.player.inventory[game.map.player.inventorySelection.y][game.map.player.inventorySelection.x].id in [6]):
                             x = 0
                             equip = True
-                        if(game.map.player.inventory[game.map.player.inventorySelection.y][game.map.player.inventorySelection.x].id in [8]):
+                        if(game.map.player.inventory[game.map.player.inventorySelection.y][game.map.player.inventorySelection.x].id in [7]):
                             x = 1
                             equip = True
-                        if(game.map.player.inventory[game.map.player.inventorySelection.y][game.map.player.inventorySelection.x].id in [9,10]):
+                        if(game.map.player.inventory[game.map.player.inventorySelection.y][game.map.player.inventorySelection.x].id in [8,9,10]):
                             x = 2
                             equip = True
                         if(equip):
@@ -640,8 +725,9 @@ def move_player(game = GAME()):
                                 game.map.player.inventory[0][x].intelligence = game.map.player.inventory[game.map.player.inventorySelection.y][game.map.player.inventorySelection.x].intelligence
                                 game.map.player.inventory[0][x].strength = game.map.player.inventory[game.map.player.inventorySelection.y][game.map.player.inventorySelection.x].strength
                                 game.map.player.inventory[0][x].cursed = game.map.player.inventory[game.map.player.inventorySelection.y][game.map.player.inventorySelection.x].cursed
+                                game.map.player.inventory[0][x].reveled = True
                                 clear_slot(game,game.map.player.inventorySelection.y,game.map.player.inventorySelection.x)
-                                if(game.map.player.inventory[0][x].id==3):
+                                if(game.map.player.inventory[0][x].id==8):
                                     game.map.player.attributes.hpMax+=game.map.player.inventory[0][x].hp
                                     game.map.player.attributes.defense+=game.map.player.inventory[0][x].defense
                                     game.map.player.attributes.strength+=game.map.player.inventory[0][x].strength
@@ -654,7 +740,7 @@ def move_player(game = GAME()):
                                     for x in range(3):
                                         if(not success):
                                             if(game.map.player.inventory[y][x].id==0):
-                                                if(game.map.player.inventory[0][game.map.player.inventorySelection.x].id==9):
+                                                if(game.map.player.inventory[0][game.map.player.inventorySelection.x].id==8):
                                                     game.map.player.attributes.hpMax-=game.map.player.inventory[0][game.map.player.inventorySelection.x].hp
                                                     game.map.player.attributes.defense-=game.map.player.inventory[0][game.map.player.inventorySelection.x].defense
                                                     game.map.player.attributes.strength-=game.map.player.inventory[0][game.map.player.inventorySelection.x].strength
@@ -700,6 +786,11 @@ def move_player(game = GAME()):
                         game.map.player.pos.x-=target.x
                         success = False
                         damage = random.randint(1,game.map.player.attributes.strength)
+                        if(game.map.player.inventory[0][0].id==6):
+                            if(random.random()<0.5):
+                                damage+=random.randint(1,damage)
+                                if(random.random()<0.1):
+                                    clear_slot(game,0,0)
                         if(random.random()<0.5):
                             damage+=game.map.player.attributes.intelligence
                         defense = random.randint(0,monster.attributes.defense)
@@ -738,10 +829,7 @@ def move_player(game = GAME()):
                         game.map.player.camPos.x+=15
                     game.map.player.keyInput = 0
             if(game.map.tiles[game.map.player.pos.y][game.map.player.pos.x]==4):
-                if(random.random()<0.5):
-                    game.map.player.attributes.hp-=random.randint(1,game.map.floor*2)
-                else:
-                    game.map.player.attributes.hp+=random.randint(1,game.map.floor*2)
+                game.map.player.attributes.hp-=random.randint(1,game.map.floor)
                 game.map.tiles[game.map.player.pos.y][game.map.player.pos.x] = 1
             if(game.map.player.pos.y == game.map.key.y and game.map.player.pos.x == game.map.key.x):
                 game.map.player.key = True
@@ -762,11 +850,20 @@ def move_player(game = GAME()):
                                         game.map.player.inventory[y][x].dexterity = 0
                                         game.map.player.inventory[y][x].intelligence = 0
                                         game.map.player.inventory[y][x].cursed = False
+                                        game.map.player.inventory[y][x].reveled = False
                                         if(random.random()<0.05):
                                             game.map.player.inventory[y][x].cursed = True
                                         game.map.player.inventory[y][x].id = random.randint(1,10)
                                         if(game.map.player.inventory[y][x].id==1):
                                             game.map.player.inventory[y][x].heal = 1+game.map.floor+random.randint(0-game.map.floor,game.map.floor)
+                                        if(game.map.player.inventory[y][x].id==8):
+                                            attribute = random.randint(0,2)
+                                            if(attribute==0):
+                                                game.map.player.inventory[y][x].hp = random.randint(1,game.map.floor+1)
+                                            if(attribute==1):
+                                                game.map.player.inventory[y][x].strength = random.randint(1,game.map.floor+1)
+                                            if(attribute==2):
+                                                game.map.player.inventory[y][x].defense = random.randint(1,game.map.floor+1)
                                         success = True
                                         item.y = -1
                                         item.x = -1
@@ -794,6 +891,12 @@ def simulate_vision(game = GAME(),y=0,x=0,i=0):
 def render_game(game = GAME()):
     if(game.map.player.attributes.hp<0):
         game.map.player.attributes.hp = 0
+    y = random.randint(-50,50)
+    x = random.randint(-50,50)
+    for j in range(-1,2):
+        for i in range(-1,2):
+            if(random.random()<0.5):
+                game.map.memory[game.map.player.pos.y+y+j][game.map.player.pos.x+x+i] = 0
     for y in range(-1,2,1):
         for x in range(-1,2,1):
             simulate_vision(game,y,x)
@@ -814,29 +917,20 @@ def render_game(game = GAME()):
                     pygame.draw.rect(screen,"#545454",(X,Y,50,50))
                 if(game.map.tiles[game.map.player.pos.y+y][game.map.player.pos.x+x]==4):
                     pygame.draw.rect(screen,"#a2a2a2",(X,Y,50,50))
-                    pygame.draw.circle(screen,"#a1a1a1",[X+12.5,Y+12.5],12)
-                    pygame.draw.circle(screen,"#a1a1a1",[X+37.5,Y+12.5],12)
-                    pygame.draw.circle(screen,"#a1a1a1",[X+37.5,Y+37.5],12)
-                    pygame.draw.circle(screen,"#a1a1a1",[X+12.5,Y+37.5],12)
+                    pygame.draw.circle(screen,"#999999",[X+12.5,Y+12.5],12)
+                    pygame.draw.circle(screen,"#999999",[X+37.5,Y+12.5],12)
+                    pygame.draw.circle(screen,"#999999",[X+37.5,Y+37.5],12)
+                    pygame.draw.circle(screen,"#999999",[X+12.5,Y+37.5],12)
                 if(game.map.key.y==game.map.player.pos.y+y and game.map.key.x==game.map.player.pos.x+x):
                     pygame.draw.lines(screen,"#fbff00",False,[[X+25,Y+20],[X+20,Y+25],[X+25,Y+30],[X+30,Y+25],[X+25,Y+20]],4)
                     pygame.draw.lines(screen,"#fbff00",False,[[X+25,Y+20],[X+25,Y+10]],3)
                 for item in game.map.items:
                     if(item.y==game.map.player.pos.y+y and item.x==game.map.player.pos.x+x):
-                        # Tampa
                         pygame.draw.rect(screen, "#A66A2C", (X+8, Y+10, 34, 10))
-
-                        # Corpo
                         pygame.draw.rect(screen, "#8B4513", (X+8, Y+20, 34, 18))
-
-                        # Faixas de metal
                         pygame.draw.rect(screen, "#808080", (X+14, Y+10, 4, 28))
                         pygame.draw.rect(screen, "#808080", (X+32, Y+10, 4, 28))
-
-                        # Fechadura
                         pygame.draw.rect(screen, "#FFD700", (X+22, Y+22, 6, 8))
-
-                        # Pés
                         pygame.draw.rect(screen, "#5A2E0C", (X+10, Y+38, 6, 4))
                         pygame.draw.rect(screen, "#5A2E0C", (X+34, Y+38, 6, 4))
             else:
@@ -1011,7 +1105,7 @@ def create_map(game = GAME()):
         game.map.player.camPos.x = 525
         if(game.map.tiles[game.map.player.pos.y][game.map.player.pos.x]==1):
             break
-    game.map.monsters = numpy.array([MONSTER() for _ in range(random.randint(1,floor*2+2))])
+    game.map.monsters = numpy.array([MONSTER() for _ in range(random.randint(floor,floor*2))])
     for monster in game.map.monsters:
         monster.pos.y = -1
         monster.pos.x = -1
@@ -1041,7 +1135,7 @@ def create_map(game = GAME()):
                     break
             if(fail):
                 continue
-            monster.id = random.randint(0,2)
+            monster.id = random.randint(0,3)
             monster.attributes.hpMax = random.randint(1,10)
             monster.attributes.defense = random.randint(1,10)
             monster.attributes.strength = random.randint(1,10)
@@ -1052,6 +1146,12 @@ def create_map(game = GAME()):
                     attPoints = game.map.floor
                     while(attPoints>0):
                         attribute = random.randint(0,4)
+                        if(monster.id==2):
+                            if(random.random()<0.75):
+                                attribute = 3
+                        if(monster.id==3):
+                            if(random.random()<0.75):
+                                attribute = 4
                         if(attribute==0):
                             attPoints-=1
                             monster.attributes.hpMax+=random.randint(1,10)
@@ -1074,15 +1174,13 @@ def create_map(game = GAME()):
                         monster.attributes.strength = game.map.floor
                         monster.attributes.intelligence = 1
                         monster.attributes.dexterity = 1
-                    if(monster.id==2):
-                        monster.attributes.hpMax = game.map.floor
                     if(key==False):
                         monster.key = True
                         key = True
                     monster.attributes.hp = monster.attributes.hpMax
                     monster.alive = True
                     break
-    game.map.items = numpy.array([POS() for _ in range(random.randint(1,floor+2))])
+    game.map.items = numpy.array([POS() for _ in range(random.randint(1,3))])
     for item in game.map.items:
         item.y = -1
         item.x = -1
