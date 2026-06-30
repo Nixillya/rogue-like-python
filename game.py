@@ -70,6 +70,7 @@ class PLAYER:
         self.inventorySelection.x = 0
         self.inventorySelection.y = 0
         self.attributes = ATTRIBUTES()
+        self.dice = random.randint(1,100)
 class MONSTER:
     def __init__(self):
         self.id = 0
@@ -82,6 +83,7 @@ class MONSTER:
         self.pos = POS()
         self.camPos = POS()
         self.attributes = ATTRIBUTES()
+        self.dice = random.randint(1,100)
 class DAMAGESVIEW:
     def __init__(self):
         self.value = 0
@@ -222,7 +224,6 @@ def render_inventory(game = GAME()):
                 pygame.draw.polygon(screen, "#C8C8C8", [(x+25, y+9),(x+35, y+15),(x+36, y+24),(x+32, y+33),(x+25, y+40),(x+18, y+33),(x+14, y+24),(x+15, y+15)])
                 pygame.draw.rect(screen, "#E8E8E8", (x+23, y+12, 4, 24))
                 pygame.draw.rect(screen, "#E8E8E8", (x+17, y+20, 16, 4))
-                pygame.draw.line(screen, "#FFFFFF", (x+18, y+14), (x+18, y+28), 2)
             if(game.map.player.inventory[j][i].cursed and game.map.player.inventory[j][i].reveled):
                 pygame.draw.circle(screen,"#FF0000",[x+random.randint(10,40),y+random.randint(10,40)],random.randint(1,10))
             x+=60
@@ -282,6 +283,9 @@ def move_monsters(game = GAME()):
                 if(monster.cured):
                     monster.cured = False
                     pygame.draw.circle(screen,"#00FF15",[X+monster.camPos.x+random.randint(-2,2),Y+monster.camPos.y+random.randint(-2,2)],20)
+                font = pygame.font.SysFont('Comic Sans MS', 15)
+                dice_text = font.render(f'{monster.dice}',True,"#ffffff")
+                screen.blit(dice_text, (X+monster.camPos.x+random.randint(-1,1)-dice_text.get_size()[0]/2,Y+monster.camPos.y+random.randint(-1,1)-dice_text.get_size()[1]/2))
 
         if(monster.attributes.hp<1):
             if(monster.alive):
@@ -427,7 +431,7 @@ def move_monsters(game = GAME()):
                         damage = random.randint(1,monster.attributes.strength)
                         if(random.random()<0.5):
                             damage+=monster.attributes.intelligence
-                        defense = random.randint(0,game.map.player.attributes.defense)
+                        defense = int(game.map.player.attributes.defense*(game.map.player.dice/100))
                         if(game.map.player.inventory[0][1].id==7):
                             if(random.random()<0.5):
                                 defense+=random.randint(1,defense+1)
@@ -466,6 +470,8 @@ def move_monsters(game = GAME()):
                         
                         pygame.draw.circle(screen,"#ff0000",[525+random.randint(-1,1),525+random.randint(-1,1)],20)
                         game.map.player.attributes.hp-=(damage-defense)
+                        if(defense<damage):
+                            game.map.player.dice = random.randint(1,100)
                         if(monster.id==4):
                             if(random.random()<0.5):
                                 debuff = random.randint(0,4)
@@ -524,84 +530,90 @@ def render_interface(game = GAME()):
 
     font = pygame.font.SysFont('Comic Sans MS', 20)
 
-    floor_text = font.render(f'Floor {game.map.floor}',True,"#ffffff")
-    screen.blit(floor_text, (900,950))
+    if(game.map.player.attributes.hp>=1):
+        floor_text = font.render(f'Floor {game.map.floor}',True,"#ffffff")
+        screen.blit(floor_text, (900,950))
 
+        dice_text = font.render(f'{game.map.player.dice}',True,"#000000")
+        screen.blit(dice_text, (game.map.player.camPos.x+random.randint(-1,1)-dice_text.get_size()[0]/2,game.map.player.camPos.y+random.randint(-1,1)-dice_text.get_size()[1]/2))
 
-    hpBar = (game.map.player.attributes.hp/game.map.player.attributes.hpMax)*200
-    pygame.draw.rect(screen,"#364935",(790,10,200,20))
-    pygame.draw.rect(screen,"#08fe00",(790,10,hpBar,20))
+        hpBar = (game.map.player.attributes.hp/game.map.player.attributes.hpMax)*200
+        pygame.draw.rect(screen,"#364935",(790,10,200,20))
+        pygame.draw.rect(screen,"#08fe00",(790,10,hpBar,20))
 
-    expBar = (game.map.player.exp/game.map.player.nextExp)*200
-    pygame.draw.rect(screen,"#464935",(790,35,200,20))
-    pygame.draw.rect(screen,"#e0fe00",(790,35,expBar,20))
-    if(game.map.player.key):
-        X = 950
-        Y = 55
-        pygame.draw.lines(screen,"#fbff00",False,[[X+25,Y+20],[X+20,Y+25],[X+25,Y+30],[X+30,Y+25],[X+25,Y+20]],4)
-        pygame.draw.lines(screen,"#fbff00",False,[[X+25,Y+20],[X+25,Y+10]],3)
+        expBar = (game.map.player.exp/game.map.player.nextExp)*200
+        pygame.draw.rect(screen,"#464935",(790,35,200,20))
+        pygame.draw.rect(screen,"#e0fe00",(790,35,expBar,20))
+        if(game.map.player.key):
+            X = 950
+            Y = 55
+            pygame.draw.lines(screen,"#fbff00",False,[[X+25,Y+20],[X+20,Y+25],[X+25,Y+30],[X+30,Y+25],[X+25,Y+20]],4)
+            pygame.draw.lines(screen,"#fbff00",False,[[X+25,Y+20],[X+25,Y+10]],3)
 
-    if(game.map.player.attributes.hp>game.map.player.attributes.hpMax):
-        game.map.player.attributes.hp = game.map.player.attributes.hpMax
-    hpValue_text = font.render(f'{game.map.player.attributes.hp} / {game.map.player.attributes.hpMax}',True,"#000000")
-    if(game.map.player.exp>game.map.player.nextExp):
-        game.map.player.exp = game.map.player.nextExp
-    expValue_text = font.render(f'{game.map.player.exp} / {game.map.player.nextExp}',True,"#000000")
-    screen.blit(hpValue_text, (890-hpValue_text.get_size()[0]/2,19-hpValue_text.get_size()[1]/2))
-    screen.blit(expValue_text, (890-expValue_text.get_size()[0]/2,44-expValue_text.get_size()[1]/2))
-    if(game.map.player.attributes.hp<1):
-        font = pygame.font.SysFont('Comic Sans MS', 50)
-        continue_text = font.render("'ESC' to continue", True, "#FF0000")
-        screen.blit(continue_text, (500-continue_text.get_size()[0]/2+random.randint(-1,1),850-continue_text.get_size()[1]/2+random.randint(-1,1)))
-    if(game.map.player.inventoryOpened):
-        render_inventory(game)
+        if(game.map.player.attributes.hp>game.map.player.attributes.hpMax):
+            game.map.player.attributes.hp = game.map.player.attributes.hpMax
+        hpValue_text = font.render(f'{game.map.player.attributes.hp} / {game.map.player.attributes.hpMax}',True,"#000000")
+        if(game.map.player.exp>game.map.player.nextExp):
+            game.map.player.exp = game.map.player.nextExp
+        expValue_text = font.render(f'{game.map.player.exp} / {game.map.player.nextExp}',True,"#000000")
+        screen.blit(hpValue_text, (890-hpValue_text.get_size()[0]/2,19-hpValue_text.get_size()[1]/2))
+        screen.blit(expValue_text, (890-expValue_text.get_size()[0]/2,44-expValue_text.get_size()[1]/2))
+        if(game.map.player.attributes.hp<1):
+            font = pygame.font.SysFont('Comic Sans MS', 50)
+            continue_text = font.render("'ESC' to continue", True, "#FF0000")
+            screen.blit(continue_text, (500-continue_text.get_size()[0]/2+random.randint(-1,1),850-continue_text.get_size()[1]/2+random.randint(-1,1)))
+        if(game.map.player.inventoryOpened):
+            render_inventory(game)
+        else:
+            y = 20
+            x = 20
+            for i in range(3):
+                if(game.map.player.inventory[0][i].id==6):
+                    pygame.draw.rect(screen, "#D8D8D8", (x+22, y+5, 6, 25)) # Lâmina
+                    pygame.draw.rect(screen, "#D8D8D8", (x+23, y+3, 4, 2)) # Ponta
+                    pygame.draw.rect(screen, "#D8D8D8", (x+24, y+1, 2, 2)) # Ponta
+                    pygame.draw.rect(screen, "#C9A227", (x+15, y+30, 20, 4)) # Guarda
+                    pygame.draw.rect(screen, "#8B5A2B", (x+22, y+34, 6, 10)) # Cabo
+                    pygame.draw.rect(screen, "#C9A227", (x+21, y+44, 8, 3)) # Pomo
+                if(game.map.player.inventory[0][i].id==7):
+                    pygame.draw.circle(screen, "#707070", (x+25, y+25), 18)
+                    pygame.draw.circle(screen, "#C8C8C8", (x+25, y+25), 15)
+                    pygame.draw.rect(screen, "#E8E8E8", (x+23, y+12, 4, 26))
+                    pygame.draw.rect(screen, "#E8E8E8", (x+12, y+23, 26, 4))
+                    pygame.draw.circle(screen, "#AAAAAA", (x+25, y+25), 4)
+                if(game.map.player.inventory[0][i].id==8):
+                    pygame.draw.circle(screen, "#FFD700", (x+25, y+25), 12)
+                    pygame.draw.circle(screen, "#000000", (x+25, y+25), 8)
+                    pygame.draw.circle(screen, "#FF4040", (x+25, y+11), 4)
+                    pygame.draw.circle(screen, "#FFFFFF", (x+24, y+10), 1)
+                if(game.map.player.inventory[0][i].id==9):
+                    pygame.draw.rect(screen, "#FFD700", (x+22, y+8, 6, 28)) # Haste vertical
+                    pygame.draw.rect(screen, "#FFD700", (x+12, y+16, 26, 6)) # Braços
+                    pygame.draw.rect(screen, "#FFD700", (x+18, y+36, 14, 5)) # Base
+                    pygame.draw.rect(screen, "#FFFFFF", (x+20, y+15, 10, 6)) # Joia central
+                    pygame.draw.rect(screen, "#FFF3A0", (x+20, y+5, 10, 3)) # Topo
+                if(game.map.player.inventory[0][i].id==10):
+                    pygame.draw.rect(screen, "#43FF52", (x+22, y+8, 6, 28)) # Haste vertical
+                    pygame.draw.rect(screen, "#43FF52", (x+12, y+16, 26, 6)) # Braços
+                    pygame.draw.rect(screen, "#43FF52", (x+18, y+36, 14, 5)) # Base
+                    pygame.draw.rect(screen, "#FFFFFF", (x+20, y+15, 10, 6)) # Joia central
+                    pygame.draw.rect(screen, "#BEFFA0", (x+20, y+5, 10, 3)) # Topo
+                if(game.map.player.inventory[0][i].id==11):
+                    pygame.draw.line(screen, "#8B5A2B", (x+18, y+42), (x+30, y+12), 5)
+                    pygame.draw.circle(screen, "#66CCFF", (x+32, y+10), 7)
+                    pygame.draw.circle(screen, "#AADDFF", (x+30, y+8), 2)
+                if(game.map.player.inventory[0][i].id==12):
+                    pygame.draw.polygon(screen, "#707070", [(x+25, y+5),(x+38, y+12),(x+40, y+25),(x+35, y+36),(x+25, y+45),(x+15, y+36),(x+10, y+25),(x+12, y+12)])
+                    pygame.draw.polygon(screen, "#C8C8C8", [(x+25, y+9),(x+35, y+15),(x+36, y+24),(x+32, y+33),(x+25, y+40),(x+18, y+33),(x+14, y+24),(x+15, y+15)])
+                    pygame.draw.rect(screen, "#E8E8E8", (x+23, y+12, 4, 24))
+                    pygame.draw.rect(screen, "#E8E8E8", (x+17, y+20, 16, 4))
+                    pygame.draw.line(screen, "#FFFFFF", (x+18, y+14), (x+18, y+28), 2)
+                if(game.map.player.inventory[0][i].cursed and game.map.player.inventory[0][i].reveled):
+                    pygame.draw.circle(screen,"#FF0000",[x+random.randint(10,40),y+random.randint(10,40)],random.randint(1,10))
+                x+=60
     else:
-        y = 20
-        x = 20
-        for i in range(3):
-            if(game.map.player.inventory[0][i].id==6):
-                pygame.draw.rect(screen, "#D8D8D8", (x+22, y+5, 6, 25)) # Lâmina
-                pygame.draw.rect(screen, "#D8D8D8", (x+23, y+3, 4, 2)) # Ponta
-                pygame.draw.rect(screen, "#D8D8D8", (x+24, y+1, 2, 2)) # Ponta
-                pygame.draw.rect(screen, "#C9A227", (x+15, y+30, 20, 4)) # Guarda
-                pygame.draw.rect(screen, "#8B5A2B", (x+22, y+34, 6, 10)) # Cabo
-                pygame.draw.rect(screen, "#C9A227", (x+21, y+44, 8, 3)) # Pomo
-            if(game.map.player.inventory[0][i].id==7):
-                pygame.draw.circle(screen, "#707070", (x+25, y+25), 18)
-                pygame.draw.circle(screen, "#C8C8C8", (x+25, y+25), 15)
-                pygame.draw.rect(screen, "#E8E8E8", (x+23, y+12, 4, 26))
-                pygame.draw.rect(screen, "#E8E8E8", (x+12, y+23, 26, 4))
-                pygame.draw.circle(screen, "#AAAAAA", (x+25, y+25), 4)
-            if(game.map.player.inventory[0][i].id==8):
-                pygame.draw.circle(screen, "#FFD700", (x+25, y+25), 12)
-                pygame.draw.circle(screen, "#000000", (x+25, y+25), 8)
-                pygame.draw.circle(screen, "#FF4040", (x+25, y+11), 4)
-                pygame.draw.circle(screen, "#FFFFFF", (x+24, y+10), 1)
-            if(game.map.player.inventory[0][i].id==9):
-                pygame.draw.rect(screen, "#FFD700", (x+22, y+8, 6, 28)) # Haste vertical
-                pygame.draw.rect(screen, "#FFD700", (x+12, y+16, 26, 6)) # Braços
-                pygame.draw.rect(screen, "#FFD700", (x+18, y+36, 14, 5)) # Base
-                pygame.draw.rect(screen, "#FFFFFF", (x+20, y+15, 10, 6)) # Joia central
-                pygame.draw.rect(screen, "#FFF3A0", (x+20, y+5, 10, 3)) # Topo
-            if(game.map.player.inventory[0][i].id==10):
-                pygame.draw.rect(screen, "#43FF52", (x+22, y+8, 6, 28)) # Haste vertical
-                pygame.draw.rect(screen, "#43FF52", (x+12, y+16, 26, 6)) # Braços
-                pygame.draw.rect(screen, "#43FF52", (x+18, y+36, 14, 5)) # Base
-                pygame.draw.rect(screen, "#FFFFFF", (x+20, y+15, 10, 6)) # Joia central
-                pygame.draw.rect(screen, "#BEFFA0", (x+20, y+5, 10, 3)) # Topo
-            if(game.map.player.inventory[0][i].id==11):
-                pygame.draw.line(screen, "#8B5A2B", (x+18, y+42), (x+30, y+12), 5)
-                pygame.draw.circle(screen, "#66CCFF", (x+32, y+10), 7)
-                pygame.draw.circle(screen, "#AADDFF", (x+30, y+8), 2)
-            if(game.map.player.inventory[0][i].id==12):
-                pygame.draw.polygon(screen, "#707070", [(x+25, y+5),(x+38, y+12),(x+40, y+25),(x+35, y+36),(x+25, y+45),(x+15, y+36),(x+10, y+25),(x+12, y+12)])
-                pygame.draw.polygon(screen, "#C8C8C8", [(x+25, y+9),(x+35, y+15),(x+36, y+24),(x+32, y+33),(x+25, y+40),(x+18, y+33),(x+14, y+24),(x+15, y+15)])
-                pygame.draw.rect(screen, "#E8E8E8", (x+23, y+12, 4, 24))
-                pygame.draw.rect(screen, "#E8E8E8", (x+17, y+20, 16, 4))
-                pygame.draw.line(screen, "#FFFFFF", (x+18, y+14), (x+18, y+28), 2)
-            if(game.map.player.inventory[0][i].cursed and game.map.player.inventory[0][i].reveled):
-                pygame.draw.circle(screen,"#FF0000",[x+random.randint(10,40),y+random.randint(10,40)],random.randint(1,10))
-            x+=60
+        floor_text = font.render(f'{game.map.floor}',True,"#000000")
+        screen.blit(floor_text, (game.map.player.camPos.x+random.randint(-1,1)-floor_text.get_size()[0]/2,game.map.player.camPos.y+random.randint(-1,1)-floor_text.get_size()[1]/2))
 #----------------------------------------------------------------------------------------------------------------------------------------
 def move_player(game = GAME()):
 
@@ -634,6 +646,7 @@ def move_player(game = GAME()):
         game.map.player.attributes.hp = 0
         if(game.map.player.inventory[0][2].id==9):
             if(random.random()<0.005):
+                game.map.player.dice = random.randint(1,100)
                 while(True):
                     y = random.randint(0,999)
                     x = random.randint(0,999)
@@ -650,6 +663,12 @@ def move_player(game = GAME()):
         else:
             if(keyboard.is_pressed('esc')):
                 game.play = False
+            for y in range(-11,11):
+                for x in range(-11,11):
+                    if(game.map.tiles[game.map.player.pos.y+y][game.map.player.pos.x+x]!=0):
+                        for j in range(-1,2):
+                            for i in range(-1,2):
+                                game.map.memory[game.map.player.pos.y+y+j][game.map.player.pos.x+x+i] = 1
     else:
         timeWait = 1/game.map.player.attributes.dexterity
         if(game.map.player.inventoryOpened):
@@ -850,11 +869,11 @@ def move_player(game = GAME()):
                         game.map.player.pos.y-=target.y
                         game.map.player.pos.x-=target.x
                         success = False
-                        damage = random.randint(1,game.map.player.attributes.strength)
+                        damage = int(game.map.player.attributes.strength*(game.map.player.dice/100))
 
                         if(game.map.player.inventory[0][0].id==6):
                             if(random.random()<0.5):
-                                damage+=random.randint(1,damage)
+                                damage+=random.randint(1,damage+game.map.floor)
                                 if(random.random()<0.1):
                                     clear_slot(game,0,0)
                         if(game.map.player.inventory[0][0].id==11):
@@ -865,7 +884,7 @@ def move_player(game = GAME()):
 
                         if(random.random()<0.5):
                             damage+=game.map.player.attributes.intelligence
-                        defense = random.randint(0,monster.attributes.defense)
+                        defense = int(monster.attributes.defense*(monster.dice/100))
                         if(random.random()<0.5):
                             defense+=game.map.player.attributes.intelligence
                         if(defense>damage):
@@ -873,6 +892,8 @@ def move_player(game = GAME()):
                             if(random.random()<0.5):
                                 defense = damage-1
                         monster.attributes.hp-=(damage-defense)
+                        if(defense<damage):
+                            monster.dice = random.randint(1,100)
                         monster.attacked = True
                         objectView = random.randint(0,49)
 
@@ -1209,6 +1230,17 @@ def create_map(game = GAME()):
             monster.attributes.strength = random.randint(1,10)
             monster.attributes.intelligence = 1
             monster.attributes.dexterity = 1
+            attribute = random.randint(0,4)
+            if(attribute==0):
+                monster.attributes.hpMax = game.map.player.attributes.hp
+            if(attribute==1):
+                monster.attributes.defense = game.map.player.attributes.defense
+            if(attribute==2):
+                monster.attributes.strength = game.map.player.attributes.strength
+            if(attribute==3):
+                monster.attributes.intelligence = game.map.player.attributes.intelligence
+            if(attribute==4):
+                monster.attributes.dexterity = game.map.player.attributes.dexterity
             if(game.map.tiles[monster.pos.y][monster.pos.x]==1):
                 if(game.map.player.pos.y!=monster.pos.y and game.map.player.pos.x!=monster.pos.x):
                     attPoints = game.map.floor
@@ -1248,6 +1280,7 @@ def create_map(game = GAME()):
                         monster.attributes.strength = game.map.floor
                         monster.attributes.intelligence *= 2
                     if(key==False):
+                        monster.dice = 100
                         monster.key = True
                         key = True
                     monster.attributes.hp = monster.attributes.hpMax
@@ -1267,6 +1300,15 @@ def create_map(game = GAME()):
 def menu(game = GAME()):
     global running
     screen.fill("black")
+    for y in range(-10,10,1):
+        for x in range(-10,10,1):
+            Y = y*50+500
+            X = x*50+500
+            block = random.randint(0,1)
+            if(block==0):
+                pygame.draw.rect(screen,"#545454",(X,Y,50,50))
+            if(block==1):
+                pygame.draw.rect(screen,"#a2a2a2",(X,Y,50,50))
     font = pygame.font.SysFont('Comic Sans MS', 50)
     font_title = pygame.font.SysFont('Comic Sans MS', 80)
     title_text = font_title.render('DUNGEONS OF SIN',True,(255, 255, 255))
