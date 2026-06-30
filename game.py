@@ -78,7 +78,6 @@ class MONSTER:
         self.attacked = False
         self.cured = False
         self.key = False
-        self.render = 1
         self.clockSpeed = time.perf_counter()
         self.pos = POS()
         self.camPos = POS()
@@ -224,6 +223,10 @@ def render_inventory(game = GAME()):
                 pygame.draw.polygon(screen, "#C8C8C8", [(x+25, y+9),(x+35, y+15),(x+36, y+24),(x+32, y+33),(x+25, y+40),(x+18, y+33),(x+14, y+24),(x+15, y+15)])
                 pygame.draw.rect(screen, "#E8E8E8", (x+23, y+12, 4, 24))
                 pygame.draw.rect(screen, "#E8E8E8", (x+17, y+20, 16, 4))
+            if(game.map.player.inventory[j][i].id==13): # ESCUDO ANTI-MALDIÇÃO
+                pygame.draw.polygon(screen, "#707070", [(x+25, y+5),(x+39, y+15),(x+36, y+32),(x+25, y+45),(x+14, y+32),(x+11, y+15)])
+                pygame.draw.polygon(screen, "#D0D0D0", [(x+25, y+9),(x+35, y+16),(x+33, y+30),(x+25, y+39),(x+17, y+30),(x+15, y+16)])
+                pygame.draw.line(screen, "#FFFFFF", (x+18, y+12), (x+25, y+38), 2)
             if(game.map.player.inventory[j][i].cursed and game.map.player.inventory[j][i].reveled):
                 pygame.draw.circle(screen,"#FF0000",[x+random.randint(10,40),y+random.randint(10,40)],random.randint(1,10))
             x+=60
@@ -259,33 +262,30 @@ def move_monsters(game = GAME()):
         if((monster.pos.x*50-game.map.player.pos.x*50)<monster.camPos.x):
             monster.camPos.x-=random.randint(2,speed)
         if((monster.pos.y-game.map.player.pos.y>=0-11 and monster.pos.y-game.map.player.pos.y<=11) and (monster.pos.x-game.map.player.pos.x>=0-11 and monster.pos.x-game.map.player.pos.x<=11)):
-            if(game.map.memory[monster.pos.y][monster.pos.x]==1):
-                monster.render = 0
-            if(monster.render!=1):
-                if(monster.id==0):
-                    pygame.draw.circle(screen,"#4E002B",[X+monster.camPos.x+random.randint(-2,2),Y+monster.camPos.y+random.randint(-2,2)],20)
-                    pygame.draw.circle(screen,"#4E002B",[X+monster.camPos.x+random.randint(10,40)-25,Y+monster.camPos.y+random.randint(10,40)-25],random.randint(1,10))
-                if(monster.id==1):
-                    pygame.draw.circle(screen,"#700000",[X+monster.camPos.x+random.randint(-2,2),Y+monster.camPos.y+random.randint(-2,2)],20)
-                    pygame.draw.circle(screen,"#700000",[X+monster.camPos.x+random.randint(10,40)-25,Y+monster.camPos.y+random.randint(10,40)-25],random.randint(1,10))
-                if(monster.id==2):
-                    pygame.draw.circle(screen,"#137000",[X+monster.camPos.x+random.randint(-2,2),Y+monster.camPos.y+random.randint(-2,2)],20)
-                    pygame.draw.circle(screen,"#137000",[X+monster.camPos.x+random.randint(10,40)-25,Y+monster.camPos.y+random.randint(10,40)-25],random.randint(1,10))
-                if(monster.id==3):
-                    pygame.draw.circle(screen,"#706500",[X+monster.camPos.x+random.randint(-2,2),Y+monster.camPos.y+random.randint(-2,2)],20)
-                    pygame.draw.circle(screen,"#706500",[X+monster.camPos.x+random.randint(10,40)-25,Y+monster.camPos.y+random.randint(10,40)-25],random.randint(1,10))
-                if(monster.id==4):
-                    pygame.draw.circle(screen,"#006C70",[X+monster.camPos.x+random.randint(-2,2),Y+monster.camPos.y+random.randint(-2,2)],20)
-                    pygame.draw.circle(screen,"#006C70",[X+monster.camPos.x+random.randint(10,40)-25,Y+monster.camPos.y+random.randint(10,40)-25],random.randint(1,10))
-                if(monster.attacked):
-                    monster.attacked = False
-                    pygame.draw.circle(screen,"#FF0000",[X+monster.camPos.x+random.randint(-2,2),Y+monster.camPos.y+random.randint(-2,2)],20)
-                if(monster.cured):
-                    monster.cured = False
-                    pygame.draw.circle(screen,"#00FF15",[X+monster.camPos.x+random.randint(-2,2),Y+monster.camPos.y+random.randint(-2,2)],20)
-                font = pygame.font.SysFont('Comic Sans MS', 15)
-                dice_text = font.render(f'{monster.dice}',True,"#ffffff")
-                screen.blit(dice_text, (X+monster.camPos.x+random.randint(-1,1)-dice_text.get_size()[0]/2,Y+monster.camPos.y+random.randint(-1,1)-dice_text.get_size()[1]/2))
+            if(monster.id==0):
+                pygame.draw.circle(screen,"#4E002B",[X+monster.camPos.x+random.randint(-2,2),Y+monster.camPos.y+random.randint(-2,2)],20)
+                pygame.draw.circle(screen,"#4E002B",[X+monster.camPos.x+random.randint(10,40)-25,Y+monster.camPos.y+random.randint(10,40)-25],random.randint(1,10))
+            if(monster.id==1):
+                pygame.draw.circle(screen,"#700000",[X+monster.camPos.x+random.randint(-2,2),Y+monster.camPos.y+random.randint(-2,2)],20)
+                pygame.draw.circle(screen,"#700000",[X+monster.camPos.x+random.randint(10,40)-25,Y+monster.camPos.y+random.randint(10,40)-25],random.randint(1,10))
+            if(monster.id==2):
+                pygame.draw.circle(screen,"#137000",[X+monster.camPos.x+random.randint(-2,2),Y+monster.camPos.y+random.randint(-2,2)],20)
+                pygame.draw.circle(screen,"#137000",[X+monster.camPos.x+random.randint(10,40)-25,Y+monster.camPos.y+random.randint(10,40)-25],random.randint(1,10))
+            if(monster.id==3):
+                pygame.draw.circle(screen,"#706500",[X+monster.camPos.x+random.randint(-2,2),Y+monster.camPos.y+random.randint(-2,2)],20)
+                pygame.draw.circle(screen,"#706500",[X+monster.camPos.x+random.randint(10,40)-25,Y+monster.camPos.y+random.randint(10,40)-25],random.randint(1,10))
+            if(monster.id==4):
+                pygame.draw.circle(screen,"#006C70",[X+monster.camPos.x+random.randint(-2,2),Y+monster.camPos.y+random.randint(-2,2)],20)
+                pygame.draw.circle(screen,"#006C70",[X+monster.camPos.x+random.randint(10,40)-25,Y+monster.camPos.y+random.randint(10,40)-25],random.randint(1,10))
+            if(monster.attacked):
+                monster.attacked = False
+                pygame.draw.circle(screen,"#FF0000",[X+monster.camPos.x+random.randint(-2,2),Y+monster.camPos.y+random.randint(-2,2)],20)
+            if(monster.cured):
+                monster.cured = False
+                pygame.draw.circle(screen,"#00FF15",[X+monster.camPos.x+random.randint(-2,2),Y+monster.camPos.y+random.randint(-2,2)],20)
+            font = pygame.font.SysFont('Comic Sans MS', 15)
+            dice_text = font.render(f'{monster.dice}',True,"#ffffff")
+            screen.blit(dice_text, (X+monster.camPos.x+random.randint(-1,1)-dice_text.get_size()[0]/2,Y+monster.camPos.y+random.randint(-1,1)-dice_text.get_size()[1]/2))
 
         if(monster.attributes.hp<1):
             if(monster.alive):
@@ -311,9 +311,6 @@ def move_monsters(game = GAME()):
                 monster.alive = False
         if(monster.alive):
             if(time.perf_counter()-monster.clockSpeed>1/monster.attributes.dexterity):
-                if(game.map.memory[monster.pos.y][monster.pos.x]==0):
-                    if(monster.render!=1):
-                        monster.render+=1
                 monster.clockSpeed = time.perf_counter()
                 target = POS()
                 target.y = 0
@@ -366,6 +363,10 @@ def move_monsters(game = GAME()):
                             if(random.random()<0.1):
                                 pygame.draw.circle(screen,"#8400FF",[525+random.randint(-1,1),525+random.randint(-1,1)],20)
                                 damage = random.randint(1,game.map.floor)
+                                if(game.map.player.inventory[0][2].id==13):
+                                    damage = 0
+                                    if(random.random()<0.1):
+                                        clear_slot(game,0,1)
                                 game.map.player.attributes.hp-=damage
                                 objectView = random.randint(0,49)
                                 game.map.damagesView[objectView].value = (0-damage)
@@ -374,6 +375,7 @@ def move_monsters(game = GAME()):
                                 game.map.damagesView[objectView].pos.x = random.randint(250,750)
                                 game.map.damagesView[objectView].size = 50
                                 direction = -1
+                                game.map.player.dice = random.randint(1,100)
                                 if(game.map.player.inventory[0][2].id==10):
                                     if(random.random()<0.1):
                                         game.map.player.attributes.hp = game.map.player.attributes.hpMax
@@ -476,11 +478,11 @@ def move_monsters(game = GAME()):
                             if(random.random()<0.5):
                                 debuff = random.randint(0,4)
                                 if(debuff==0):
-                                    game.map.player.attributes.hpMax-=random.randint(1,10)
+                                    game.map.player.attributes.hpMax-=1
                                 if(debuff==1):
-                                    game.map.player.attributes.defense-=random.randint(1,10)
+                                    game.map.player.attributes.defense-=1
                                 if(debuff==2):
-                                    game.map.player.attributes.strength-=random.randint(1,10)
+                                    game.map.player.attributes.strength-=1
                                 if(debuff==3):
                                     game.map.player.attributes.intelligence-=1
                                 if(debuff==4):
@@ -491,6 +493,7 @@ def move_monsters(game = GAME()):
                         game.map.damagesView[objectView].pos.y = random.randint(250,750)
                         game.map.damagesView[objectView].pos.x = random.randint(250,750)
                         game.map.damagesView[objectView].size = 50
+                        monster.dice = random.randint(1,100)
                 for otherMonster in game.map.monsters:
                     if(otherMonster==monster):
                         continue
@@ -513,7 +516,32 @@ def move_monsters(game = GAME()):
                         monster.camPos.x-=15
                     if(direction==3):
                         monster.camPos.x+=15
+                else:
+                    if(direction!=-1):
+                        monster.dice = random.randint(1,100)
     game.map.player.keyInput = 0
+#----------------------------------------------------------------------------------------------------------------------------------------
+def render_dark(game = GAME()):
+    for y in range(-10,10,1):
+        for x in range(-10,10,1):
+            Y = y*50+500
+            X = x*50+500
+            if(game.map.memory[game.map.player.pos.y+y][game.map.player.pos.x+x]==0):
+                size = 45
+                if(random.random()<0.1):
+                    size = random.randint(40,50)
+                pygame.draw.circle(screen,"#000000",[X+random.randint(20,30),Y+random.randint(20,30)],size)
+                chance = ((game.map.player.attributes.hpMax-game.map.player.attributes.hp)/(game.map.player.attributes.hpMax))/100
+                if(random.random()<chance):
+                    pygame.draw.circle(screen,"#161616",[X+random.randint(10,40),Y+random.randint(10,40)],random.randint(1,10))
+                    j = random.randint(-25,25)
+                    i = random.randint(-25,25)
+                    for j1 in range(-1,2):
+                        for i1 in range(-1,2):
+                            if(j1==0 or i1==0):
+                                if(game.map.memory[game.map.player.pos.y+j+j1][game.map.player.pos.x+i+i1]==0):
+                                    game.map.memory[game.map.player.pos.y+j][game.map.player.pos.x+i] = 0
+                
 #----------------------------------------------------------------------------------------------------------------------------------------
 def render_interface(game = GAME()):
     for damageObject in game.map.damagesView:
@@ -558,10 +586,6 @@ def render_interface(game = GAME()):
         expValue_text = font.render(f'{game.map.player.exp} / {game.map.player.nextExp}',True,"#000000")
         screen.blit(hpValue_text, (890-hpValue_text.get_size()[0]/2,19-hpValue_text.get_size()[1]/2))
         screen.blit(expValue_text, (890-expValue_text.get_size()[0]/2,44-expValue_text.get_size()[1]/2))
-        if(game.map.player.attributes.hp<1):
-            font = pygame.font.SysFont('Comic Sans MS', 50)
-            continue_text = font.render("'ESC' to continue", True, "#FF0000")
-            screen.blit(continue_text, (500-continue_text.get_size()[0]/2+random.randint(-1,1),850-continue_text.get_size()[1]/2+random.randint(-1,1)))
         if(game.map.player.inventoryOpened):
             render_inventory(game)
         else:
@@ -607,13 +631,19 @@ def render_interface(game = GAME()):
                     pygame.draw.polygon(screen, "#C8C8C8", [(x+25, y+9),(x+35, y+15),(x+36, y+24),(x+32, y+33),(x+25, y+40),(x+18, y+33),(x+14, y+24),(x+15, y+15)])
                     pygame.draw.rect(screen, "#E8E8E8", (x+23, y+12, 4, 24))
                     pygame.draw.rect(screen, "#E8E8E8", (x+17, y+20, 16, 4))
-                    pygame.draw.line(screen, "#FFFFFF", (x+18, y+14), (x+18, y+28), 2)
+                if(game.map.player.inventory[0][i].id==13): # ESCUDO ANTI-MALDIÇÃO
+                    pygame.draw.polygon(screen, "#707070", [(x+25, y+5),(x+39, y+15),(x+36, y+32),(x+25, y+45),(x+14, y+32),(x+11, y+15)])
+                    pygame.draw.polygon(screen, "#D0D0D0", [(x+25, y+9),(x+35, y+16),(x+33, y+30),(x+25, y+39),(x+17, y+30),(x+15, y+16)])
+                    pygame.draw.line(screen, "#FFFFFF", (x+18, y+12), (x+25, y+38), 2)
                 if(game.map.player.inventory[0][i].cursed and game.map.player.inventory[0][i].reveled):
                     pygame.draw.circle(screen,"#FF0000",[x+random.randint(10,40),y+random.randint(10,40)],random.randint(1,10))
                 x+=60
     else:
         floor_text = font.render(f'{game.map.floor}',True,"#000000")
         screen.blit(floor_text, (game.map.player.camPos.x+random.randint(-1,1)-floor_text.get_size()[0]/2,game.map.player.camPos.y+random.randint(-1,1)-floor_text.get_size()[1]/2))
+        font = pygame.font.SysFont('Comic Sans MS', 50)
+        continue_text = font.render("'ESC' to continue", True, "#FF0000")
+        screen.blit(continue_text, (500-continue_text.get_size()[0]/2+random.randint(-1,1),850-continue_text.get_size()[1]/2+random.randint(-1,1)))
 #----------------------------------------------------------------------------------------------------------------------------------------
 def move_player(game = GAME()):
 
@@ -646,7 +676,6 @@ def move_player(game = GAME()):
         game.map.player.attributes.hp = 0
         if(game.map.player.inventory[0][2].id==9):
             if(random.random()<0.005):
-                game.map.player.dice = random.randint(1,100)
                 while(True):
                     y = random.randint(0,999)
                     x = random.randint(0,999)
@@ -663,12 +692,7 @@ def move_player(game = GAME()):
         else:
             if(keyboard.is_pressed('esc')):
                 game.play = False
-            for y in range(-11,11):
-                for x in range(-11,11):
-                    if(game.map.tiles[game.map.player.pos.y+y][game.map.player.pos.x+x]!=0):
-                        for j in range(-1,2):
-                            for i in range(-1,2):
-                                game.map.memory[game.map.player.pos.y+y+j][game.map.player.pos.x+x+i] = 1
+            game.map.player.attributes.intelligence = 1
     else:
         timeWait = 1/game.map.player.attributes.dexterity
         if(game.map.player.inventoryOpened):
@@ -793,7 +817,7 @@ def move_player(game = GAME()):
                         if(game.map.player.inventory[game.map.player.inventorySelection.y][game.map.player.inventorySelection.x].id in [6,11]):
                             x = 0
                             equip = True
-                        if(game.map.player.inventory[game.map.player.inventorySelection.y][game.map.player.inventorySelection.x].id in [7,12]):
+                        if(game.map.player.inventory[game.map.player.inventorySelection.y][game.map.player.inventorySelection.x].id in [7,12,13]):
                             x = 1
                             equip = True
                         if(game.map.player.inventory[game.map.player.inventorySelection.y][game.map.player.inventorySelection.x].id in [8,9,10]):
@@ -902,6 +926,7 @@ def move_player(game = GAME()):
                         game.map.damagesView[objectView].pos.y = random.randint(250,750)
                         game.map.damagesView[objectView].pos.x = random.randint(250,750)
                         game.map.damagesView[objectView].size = 50
+                        game.map.player.dice = random.randint(1,100)
                 if(success):
                     if(game.map.player.keyInput==1):
                         game.map.player.camPos.y+=50
@@ -911,6 +936,7 @@ def move_player(game = GAME()):
                         game.map.player.camPos.x+=50
                     if(game.map.player.keyInput==4):
                         game.map.player.camPos.x-=50
+                    game.map.player.dice = random.randint(1,100)
                 else:
                     if(game.map.player.keyInput==1):
                         game.map.player.camPos.y-=15
@@ -946,7 +972,7 @@ def move_player(game = GAME()):
                                         game.map.player.inventory[y][x].reveled = False
                                         if(random.random()<0.05):
                                             game.map.player.inventory[y][x].cursed = True
-                                        game.map.player.inventory[y][x].id = random.randint(1,12)
+                                        game.map.player.inventory[y][x].id = random.randint(1,13)
                                         if(game.map.player.inventory[y][x].id==1):
                                             game.map.player.inventory[y][x].heal = 1+game.map.floor+random.randint(0-game.map.floor,game.map.floor)
                                         if(game.map.player.inventory[y][x].id==8):
@@ -993,39 +1019,34 @@ def render_game(game = GAME()):
         for x in range(-10,10,1):
             Y = y*50+500
             X = x*50+500
-            if(game.map.memory[game.map.player.pos.y+y][game.map.player.pos.x+x]==1):
-                if(game.map.tiles[game.map.player.pos.y+y][game.map.player.pos.x+x]==0):
-                    pygame.draw.rect(screen,"#545454",(X,Y,50,50))
-                if(game.map.tiles[game.map.player.pos.y+y][game.map.player.pos.x+x]==1):
-                    pygame.draw.rect(screen,"#a2a2a2",(X,Y,50,50))
-                if(game.map.tiles[game.map.player.pos.y+y][game.map.player.pos.x+x]==2):
-                    if(game.map.player.key):
-                        pygame.draw.rect(screen,"#ffffff",(X,Y,50,50))
-                    pygame.draw.rect(screen,"#363636",(X+5+random.randint(-1,1),Y+5+random.randint(-1,1),40,40))
-                if(game.map.tiles[game.map.player.pos.y+y][game.map.player.pos.x+x]==3):
-                    pygame.draw.rect(screen,"#545454",(X,Y,50,50))
-                if(game.map.tiles[game.map.player.pos.y+y][game.map.player.pos.x+x]==4):
-                    pygame.draw.rect(screen,"#a2a2a2",(X,Y,50,50))
-                    pygame.draw.circle(screen,"#999999",[X+12.5,Y+12.5],12)
-                    pygame.draw.circle(screen,"#999999",[X+37.5,Y+12.5],12)
-                    pygame.draw.circle(screen,"#999999",[X+37.5,Y+37.5],12)
-                    pygame.draw.circle(screen,"#999999",[X+12.5,Y+37.5],12)
-                if(game.map.key.y==game.map.player.pos.y+y and game.map.key.x==game.map.player.pos.x+x):
-                    pygame.draw.lines(screen,"#fbff00",False,[[X+25,Y+20],[X+20,Y+25],[X+25,Y+30],[X+30,Y+25],[X+25,Y+20]],4)
-                    pygame.draw.lines(screen,"#fbff00",False,[[X+25,Y+20],[X+25,Y+10]],3)
-                for item in game.map.items:
-                    if(item.y==game.map.player.pos.y+y and item.x==game.map.player.pos.x+x):
-                        pygame.draw.rect(screen, "#A66A2C", (X+8, Y+10, 34, 10))
-                        pygame.draw.rect(screen, "#8B4513", (X+8, Y+20, 34, 18))
-                        pygame.draw.rect(screen, "#808080", (X+14, Y+10, 4, 28))
-                        pygame.draw.rect(screen, "#808080", (X+32, Y+10, 4, 28))
-                        pygame.draw.rect(screen, "#FFD700", (X+22, Y+22, 6, 8))
-                        pygame.draw.rect(screen, "#5A2E0C", (X+10, Y+38, 6, 4))
-                        pygame.draw.rect(screen, "#5A2E0C", (X+34, Y+38, 6, 4))
-            else:
-                chance = ((game.map.player.attributes.hpMax-game.map.player.attributes.hp)/(game.map.player.attributes.hpMax))/100
-                if(random.random()<chance):
-                    pygame.draw.circle(screen,"#161616",[X+random.randint(10,40),Y+random.randint(10,40)],random.randint(1,10))
+            if(game.map.tiles[game.map.player.pos.y+y][game.map.player.pos.x+x]==0):
+                pygame.draw.rect(screen,"#545454",(X,Y,50,50))
+            if(game.map.tiles[game.map.player.pos.y+y][game.map.player.pos.x+x]==1):
+                pygame.draw.rect(screen,"#a2a2a2",(X,Y,50,50))
+            if(game.map.tiles[game.map.player.pos.y+y][game.map.player.pos.x+x]==2):
+                if(game.map.player.key):
+                    pygame.draw.rect(screen,"#ffffff",(X,Y,50,50))
+                pygame.draw.rect(screen,"#363636",(X+5+random.randint(-1,1),Y+5+random.randint(-1,1),40,40))
+            if(game.map.tiles[game.map.player.pos.y+y][game.map.player.pos.x+x]==3):
+                pygame.draw.rect(screen,"#545454",(X,Y,50,50))
+            if(game.map.tiles[game.map.player.pos.y+y][game.map.player.pos.x+x]==4):
+                pygame.draw.rect(screen,"#a2a2a2",(X,Y,50,50))
+                pygame.draw.circle(screen,"#999999",[X+12.5,Y+12.5],12)
+                pygame.draw.circle(screen,"#999999",[X+37.5,Y+12.5],12)
+                pygame.draw.circle(screen,"#999999",[X+37.5,Y+37.5],12)
+                pygame.draw.circle(screen,"#999999",[X+12.5,Y+37.5],12)
+            if(game.map.key.y==game.map.player.pos.y+y and game.map.key.x==game.map.player.pos.x+x):
+                pygame.draw.lines(screen,"#fbff00",False,[[X+25,Y+20],[X+20,Y+25],[X+25,Y+30],[X+30,Y+25],[X+25,Y+20]],4)
+                pygame.draw.lines(screen,"#fbff00",False,[[X+25,Y+20],[X+25,Y+10]],3)
+            for item in game.map.items:
+                if(item.y==game.map.player.pos.y+y and item.x==game.map.player.pos.x+x):
+                    pygame.draw.rect(screen, "#A66A2C", (X+8, Y+10, 34, 10))
+                    pygame.draw.rect(screen, "#8B4513", (X+8, Y+20, 34, 18))
+                    pygame.draw.rect(screen, "#808080", (X+14, Y+10, 4, 28))
+                    pygame.draw.rect(screen, "#808080", (X+32, Y+10, 4, 28))
+                    pygame.draw.rect(screen, "#FFD700", (X+22, Y+22, 6, 8))
+                    pygame.draw.rect(screen, "#5A2E0C", (X+10, Y+38, 6, 4))
+                    pygame.draw.rect(screen, "#5A2E0C", (X+34, Y+38, 6, 4))
 
     if(game.map.player.attributes.hp<1):
         pygame.draw.lines(screen,"#5e5e5e",False,[[game.map.player.camPos.x-20,game.map.player.camPos.y+15],[game.map.player.camPos.x+20,game.map.player.camPos.y+15]],10)
@@ -1042,7 +1063,12 @@ def put_attributes(game = GAME()):
                 running = False
                 break
         screen.fill("black")
-
+        for y in range(-10,10,1):
+            for x in range(-10,10,1):
+                Y = y*50+500
+                X = x*50+500
+                if(random.random()<0.1):
+                    pygame.draw.circle(screen,"#161616",[X+random.randint(10,40),Y+random.randint(10,40)],random.randint(1,10))
         font = pygame.font.SysFont('Comic Sans MS', 50)
         points_text = font.render(f'ATTRIBUTES POINTS: {game.map.player.attPoints}', True, (0, 255, 0))
         if(game.map.player.attPoints<=0):
@@ -1232,7 +1258,7 @@ def create_map(game = GAME()):
             monster.attributes.dexterity = 1
             attribute = random.randint(0,4)
             if(attribute==0):
-                monster.attributes.hpMax = game.map.player.attributes.hp
+                monster.attributes.hpMax = game.map.player.attributes.hpMax
             if(attribute==1):
                 monster.attributes.defense = game.map.player.attributes.defense
             if(attribute==2):
@@ -1280,13 +1306,15 @@ def create_map(game = GAME()):
                         monster.attributes.strength = game.map.floor
                         monster.attributes.intelligence *= 2
                     if(key==False):
-                        monster.dice = 100
                         monster.key = True
                         key = True
                     monster.attributes.hp = monster.attributes.hpMax
                     monster.alive = True
                     break
-    game.map.items = numpy.array([POS() for _ in range(random.randint(0,5))])
+    itensQ = game.map.floor
+    if(itensQ>9):
+        itensQ = 9
+    game.map.items = numpy.array([POS() for _ in range(itensQ)])
     for item in game.map.items:
         item.y = -1
         item.x = -1
@@ -1304,11 +1332,8 @@ def menu(game = GAME()):
         for x in range(-10,10,1):
             Y = y*50+500
             X = x*50+500
-            block = random.randint(0,1)
-            if(block==0):
-                pygame.draw.rect(screen,"#545454",(X,Y,50,50))
-            if(block==1):
-                pygame.draw.rect(screen,"#a2a2a2",(X,Y,50,50))
+            if(random.random()<0.1):
+                pygame.draw.circle(screen,"#161616",[X+random.randint(10,40),Y+random.randint(10,40)],random.randint(1,10))
     font = pygame.font.SysFont('Comic Sans MS', 50)
     font_title = pygame.font.SysFont('Comic Sans MS', 80)
     title_text = font_title.render('DUNGEONS OF SIN',True,(255, 255, 255))
@@ -1350,6 +1375,7 @@ def play(game = GAME()):
     render_game(game)
     move_player(game)
     move_monsters(game)
+    render_dark(game)
     render_interface(game)
 #----------------------------------------------------------------------------------------------------------------------------------------
 
