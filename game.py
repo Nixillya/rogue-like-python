@@ -361,25 +361,27 @@ def move_monsters(game = GAME()):
                                     direction = -1
                         else:
                             if(random.random()<0.1):
-                                pygame.draw.circle(screen,"#8400FF",[525+random.randint(-1,1),525+random.randint(-1,1)],20)
                                 damage = random.randint(1,game.map.floor)
                                 if(game.map.player.inventory[0][2].id==13):
                                     damage = 0
                                     if(random.random()<0.1):
                                         clear_slot(game,0,1)
-                                game.map.player.attributes.hp-=damage
-                                objectView = random.randint(0,49)
-                                game.map.damagesView[objectView].value = (0-damage)
-                                game.map.damagesView[objectView].id = 1
-                                game.map.damagesView[objectView].pos.y = random.randint(250,750)
-                                game.map.damagesView[objectView].pos.x = random.randint(250,750)
-                                game.map.damagesView[objectView].size = 50
-                                direction = -1
-                                game.map.player.dice = random.randint(1,100)
-                                if(game.map.player.inventory[0][2].id==10):
-                                    if(random.random()<0.1):
-                                        game.map.player.attributes.hp = game.map.player.attributes.hpMax
-                                        clear_slot(game,0,2)
+                                if(damage<game.map.player.attributes.hp):
+                                    pygame.draw.circle(screen,"#8400FF",[525+random.randint(-1,1),525+random.randint(-1,1)],20)
+
+                                    game.map.player.attributes.hp-=damage
+                                    objectView = random.randint(0,49)
+                                    game.map.damagesView[objectView].value = (0-damage)
+                                    game.map.damagesView[objectView].id = 1
+                                    game.map.damagesView[objectView].pos.y = random.randint(250,750)
+                                    game.map.damagesView[objectView].pos.x = random.randint(250,750)
+                                    game.map.damagesView[objectView].size = 50
+                                    direction = -1
+                                    game.map.player.dice = random.randint(1,100)
+                                    if(game.map.player.inventory[0][2].id==10):
+                                        if(random.random()<0.1):
+                                            game.map.player.attributes.hp = game.map.player.attributes.hpMax
+                                            clear_slot(game,0,2)
                 if(direction==0):
                     target.y-=1
                 if(direction==1):

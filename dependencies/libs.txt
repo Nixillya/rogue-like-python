@@ -1,1 +1,1 @@
-pip install pygame keyboard numpy time
+pip install pygame keyboard numpy
