@@ -78,7 +78,6 @@ class MONSTER:
         self.id = 0
         self.alive = False
         self.attacked = False
-        self.cured = False
         self.key = False
         self.clockSpeed = time.perf_counter()
         self.pos = POS()
@@ -285,9 +284,6 @@ def move_monsters(game = GAME()):
             if(monster.attacked):
                 monster.attacked = False
                 pygame.draw.circle(screen,"#FF0000",[X+monster.camPos.x+random.randint(-2,2),Y+monster.camPos.y+random.randint(-2,2)],20)
-            if(monster.cured):
-                monster.cured = False
-                pygame.draw.circle(screen,"#00FF15",[X+monster.camPos.x+random.randint(-2,2),Y+monster.camPos.y+random.randint(-2,2)],20)
             font = pygame.font.SysFont('Comic Sans MS', 15)
             dice_text = font.render(f'{monster.dice}',True,"#ffffff")
             screen.blit(dice_text, (X+monster.camPos.x+random.randint(-1,1)-dice_text.get_size()[0]/2,Y+monster.camPos.y+random.randint(-1,1)-dice_text.get_size()[1]/2))
@@ -362,7 +358,8 @@ def move_monsters(game = GAME()):
                                     game.map.monsters[healMonster].attributes.hp+=game.map.floor
                                     if(game.map.monsters[healMonster].attributes.hp>game.map.monsters[healMonster].attributes.hpMax):
                                         game.map.monsters[healMonster].attributes.hp = game.map.monsters[healMonster].attributes.hpMax
-                                    game.map.monsters[healMonster].cured = True
+                                    pygame.draw.circle(screen,"#00FF15",[X+game.map.monsters[healMonster].camPos.x+random.randint(-1,1),Y+game.map.monsters[healMonster].camPos.y+random.randint(-1,1)],20)
+                                    pygame.draw.line(screen,"#00FF15",[game.map.monsters[healMonster].camPos.x+random.randint(-2,2),game.map.monsters[healMonster].camPos.y+random.randint(-2,2)],[X+monster.camPos.x+random.randint(-2,2),Y+monster.camPos.y+random.randint(-2,2)],30)
                                     direction = -1
                         else:
                             if(random.random()<0.1):
@@ -377,8 +374,8 @@ def move_monsters(game = GAME()):
                                         game.map.player.inventory[0][1].breakChance+=1
                                         
                                 if(damage<game.map.player.attributes.hp):
-                                    pygame.draw.circle(screen,"#8400FF",[525+random.randint(-1,1),525+random.randint(-1,1)],20)
-                                    pygame.draw.line(screen,"#8400FF",[game.map.player.camPos.y+random.randint(-2,2),game.map.player.camPos.x+random.randint(-2,2)],[X+monster.camPos.x+random.randint(-2,2),Y+monster.camPos.y+random.randint(-2,2)],20)
+                                    pygame.draw.circle(screen,"#8400FF",[game.map.player.camPos.x+random.randint(-1,1),game.map.player.camPos.y+random.randint(-1,1)],20)
+                                    pygame.draw.line(screen,"#8400FF",[game.map.player.camPos.x+random.randint(-2,2),game.map.player.camPos.y+random.randint(-2,2)],[X+monster.camPos.x+random.randint(-2,2),Y+monster.camPos.y+random.randint(-2,2)],30)
                                     game.map.player.attributes.hp-=damage
                                     objectView = random.randint(0,49)
                                     game.map.damagesView[objectView].value = (0-damage)
