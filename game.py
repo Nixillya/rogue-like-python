@@ -313,6 +313,10 @@ def move_monsters(game = GAME()):
                 game.map.player.exp+=random.randint(1,game.map.floor*game.map.player.attributes.intelligence)
                 monster.alive = False
         if(monster.alive):
+            if(monster.pos.y==game.map.key.y and monster.pos.x==game.map.key.x):
+                game.map.key.y = -1
+                game.map.key.x = -1
+                monster.key = True
             if(time.perf_counter()-monster.clockSpeed>1/monster.attributes.dexterity):
                 monster.clockSpeed = time.perf_counter()
                 target = POS()
@@ -361,7 +365,7 @@ def move_monsters(game = GAME()):
                                     if(game.map.monsters[healMonster].attributes.hp>game.map.monsters[healMonster].attributes.hpMax):
                                         game.map.monsters[healMonster].attributes.hp = game.map.monsters[healMonster].attributes.hpMax
                                     pygame.draw.circle(screen,"#00FF15",[X+game.map.monsters[healMonster].camPos.x+random.randint(-1,1),Y+game.map.monsters[healMonster].camPos.y+random.randint(-1,1)],20)
-                                    pygame.draw.line(screen,"#00FF15",[game.map.monsters[healMonster].camPos.x+random.randint(-2,2),game.map.monsters[healMonster].camPos.y+random.randint(-2,2)],[X+monster.camPos.x+random.randint(-2,2),Y+monster.camPos.y+random.randint(-2,2)],30)
+                                    pygame.draw.line(screen,"#00FF15",[X+game.map.monsters[healMonster].camPos.x+random.randint(-2,2),Y+game.map.monsters[healMonster].camPos.y+random.randint(-2,2)],[X+monster.camPos.x+random.randint(-2,2),Y+monster.camPos.y+random.randint(-2,2)],30)
                                     direction = -1
                         else:
                             if(random.random()<0.1):
@@ -473,7 +477,7 @@ def move_monsters(game = GAME()):
                             monster.attributes.hp-=damage
                             defense+=1
                             if(game.map.player.inventory[0][1].goBreak):
-                                clear_slot(game,0,2)
+                                clear_slot(game,0,1)
                             else:
                                 if(random.random()<game.map.player.inventory[0][1].breakChance/100):
                                     game.map.player.inventory[0][1].goBreak = True
@@ -734,7 +738,8 @@ def move_player(game = GAME()):
                 game.map.player.attributes.hp = 1
                 for y in range(4):
                     for x in range(3):
-                        clear_slot(game,y,x)
+                        if(random.random()<0.5):
+                            clear_slot(game,y,x)
                 game.map.player.keyInput = 5
                 return
         else:
@@ -883,6 +888,8 @@ def move_player(game = GAME()):
                                 game.map.player.inventory[0][x].strength = game.map.player.inventory[game.map.player.inventorySelection.y][game.map.player.inventorySelection.x].strength
                                 game.map.player.inventory[0][x].cursed = game.map.player.inventory[game.map.player.inventorySelection.y][game.map.player.inventorySelection.x].cursed
                                 game.map.player.inventory[0][x].reveled = True
+                                game.map.player.inventory[0][x].breakChance = game.map.player.inventory[game.map.player.inventorySelection.y][game.map.player.inventorySelection.x].breakChance
+                                game.map.player.inventory[0][x].goBreak = game.map.player.inventory[game.map.player.inventorySelection.y][game.map.player.inventorySelection.x].goBreak
                                 game.map.player.attributes.hpMax+=game.map.player.inventory[0][x].hp
                                 game.map.player.attributes.defense+=game.map.player.inventory[0][x].defense
                                 game.map.player.attributes.strength+=game.map.player.inventory[0][x].strength
@@ -908,6 +915,10 @@ def move_player(game = GAME()):
                                                 game.map.player.inventory[y][x].hp = game.map.player.inventory[game.map.player.inventorySelection.y][game.map.player.inventorySelection.x].hp
                                                 game.map.player.inventory[y][x].intelligence = game.map.player.inventory[game.map.player.inventorySelection.y][game.map.player.inventorySelection.x].intelligence
                                                 game.map.player.inventory[y][x].strength = game.map.player.inventory[game.map.player.inventorySelection.y][game.map.player.inventorySelection.x].strength
+                                                game.map.player.inventory[y][x].cursed = game.map.player.inventory[game.map.player.inventorySelection.y][game.map.player.inventorySelection.x].cursed
+                                                game.map.player.inventory[y][x].reveled = game.map.player.inventory[game.map.player.inventorySelection.y][game.map.player.inventorySelection.x].reveled
+                                                game.map.player.inventory[y][x].breakChance = game.map.player.inventory[game.map.player.inventorySelection.y][game.map.player.inventorySelection.x].breakChance
+                                                game.map.player.inventory[y][x].goBreak = game.map.player.inventory[game.map.player.inventorySelection.y][game.map.player.inventorySelection.x].goBreak
                                                 success = True
                                 clear_slot(game,0,game.map.player.inventorySelection.x)
             if(keyboard.is_pressed('i')):
@@ -939,13 +950,14 @@ def move_player(game = GAME()):
                         damage = int(game.map.player.attributes.strength*(game.map.player.dice/100))
 
                         if(game.map.player.inventory[0][0].id==6):
-                            damage+=random.randint(1,damage+game.map.floor)
+                            damage+=random.randint(0,damage)
                             if(game.map.player.inventory[0][0].goBreak):
                                 clear_slot(game,0,0)
                             else:
                                 if(random.random()<game.map.player.inventory[0][0].breakChance/100):
                                     game.map.player.inventory[0][0].goBreak = True
-                                game.map.player.inventory[0][0].breakChance+=1
+                                if(random.random()<0.5):
+                                    game.map.player.inventory[0][0].breakChance+=1
                                 
                         if(game.map.player.inventory[0][0].id==11):
                             damage+=game.map.player.attributes.intelligence
@@ -1190,8 +1202,9 @@ def put_attributes(game = GAME()):
                             game.map.player.attPoints-=(game.map.player.attributes.intelligence)
                             game.map.player.attributes.intelligence+=1
                     if(game.attSelection==4):
-                        game.map.player.attPoints-=1
-                        game.map.player.attributes.dexterity+=0.1
+                        if(game.map.player.attPoints>=int(game.map.player.attributes.dexterity)):
+                            game.map.player.attPoints-=int(game.map.player.attributes.dexterity)
+                            game.map.player.attributes.dexterity+=0.1
                 if(game.attSelection==5):
                     break
         pygame.display.flip()
@@ -1332,8 +1345,9 @@ def create_map(game = GAME()):
                                 attPoints-=monster.attributes.intelligence
                                 monster.attributes.intelligence+=1
                         if(attribute==4):
-                            attPoints-=1
-                            monster.attributes.dexterity+=0.1
+                            if(attPoints>=int(monster.attributes.dexterity)):
+                                attPoints-=int(monster.attributes.dexterity)
+                                monster.attributes.dexterity+=0.1
                     if(monster.id==1):
                         monster.attributes.hpMax = game.map.floor
                         monster.attributes.defense = game.map.floor
@@ -1345,12 +1359,19 @@ def create_map(game = GAME()):
                         monster.attributes.defense = game.map.floor
                         monster.attributes.strength = game.map.floor
                         monster.attributes.intelligence *= 2
-                    if(key==False):
+                    if(random.random()<0.01):
                         monster.key = True
                         key = True
                     monster.attributes.hp = monster.attributes.hpMax
                     monster.alive = True
                     break
+    if(not key):
+        while(True):
+            game.map.key.y = random.randint(0,999)
+            game.map.key.x = random.randint(0,999)
+            if(game.map.tiles[game.map.key.y][game.map.key.x]==1):
+                key = True
+                break
     itensQ = game.map.floor
     if(itensQ>9):
         itensQ = 9
